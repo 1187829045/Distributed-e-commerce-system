@@ -1,16 +1,15 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"        // 引入Gin框架，用于处理HTTP请求和响应
+	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha" // 引入base64Captcha库，用于生成验证码
 	"go.uber.org/zap"                 // 引入zap库，用于日志记录
-	"net/http"                        // 引入net/http包，用于HTTP状态码
+	"net/http"
 )
 
-// var store = base64Captcha.DefaultMemStore 初始化一个默认的内存存储，用于存储验证码
+// 初始化一个默认的内存存储，用于存储验证码
 var store = base64Captcha.DefaultMemStore
 
-// gin.Context 是Gin框架中非常重要的一个结构体，它封装了处理 HTTP 请求的上下文信息，包括请求和响应的数据、参数、查询字符串、表单数据等。
 // 通过 gin.Context，开发者可以方便地获取和操作 HTTP 请求和响应的数据，处理中间件逻辑，进行错误处理，控制请求的流程等等。
 
 // GetCaptcha 处理获取验证码的请求

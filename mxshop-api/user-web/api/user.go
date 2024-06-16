@@ -8,7 +8,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"mxshop-api/user-web/forms"
@@ -93,17 +92,10 @@ func HandleValidatorError(c *gin.Context, err error) {
 func GetUserList(ctx *gin.Context) {
 
 	// 拨号连接用户 gRPC 服务器 跨域的问题-后端解决
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host,
-		global.ServerConfig.UserSrvInfo.Port), grpc.WithInsecure())
-	if err != nil {
-		zap.S().Errorw("[GetUserList]连接【用户服务失败】",
-			"msg", err.Error()) // 记录连接用户服务失败的错误信息
-	}
 	claims, _ := ctx.Get("claims")
 	currentUser := claims.(*models.CustomClaims)
 	zap.S().Infof("访问用户：%d", currentUser.ID)
 	// 生成 gRPC 的客户端并调用接口
-	userSrvClient := proto.NewUserClient(userConn)
 
 	// 请求用户列表的参数
 	// context.Background(): 上下文，用于控制 gRPC 调用的生命周期
@@ -114,7 +106,7 @@ func GetUserList(ctx *gin.Context) {
 	pSize := ctx.DefaultQuery("pSize", "10")
 	pSizeInt, _ := strconv.Atoi(pSize)
 
-	rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{
+	rsp, err := global.UserSrvClient.GetUserList(context.Background(), &proto.PageInfo{
 		Pn:    uint32(pnInt),    // 页码
 		PSize: uint32(pSizeInt), // 每页大小
 	})
@@ -162,19 +154,10 @@ func PassWordLogin(c *gin.Context) {
 		})
 		return
 	}
-	// 拨号连接用户 gRPC 服务器
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host,
-		global.ServerConfig.UserSrvInfo.Port), grpc.WithInsecure())
-	if err != nil {
-		zap.S().Errorw("[GetUserList]连接【用户服务失败】",
-			"msg", err.Error()) // 记录连接用户服务失败的错误信息
-	}
 
-	// 生成 gRPC 的客户端并调用接口
-	userSrvClient := proto.NewUserClient(userConn)
 	//登陆的逻辑
 
-	rsp, err := userSrvClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
+	rsp, err := global.UserSrvClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
 		Mobile: passwordLoginForm.Mobile,
 	})
 	if err != nil {
@@ -193,7 +176,7 @@ func PassWordLogin(c *gin.Context) {
 		}
 	} else {
 		//只是查询到用户并没有检查密码
-		if passRsp, passErr := userSrvClient.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
+		if passRsp, passErr := global.UserSrvClient.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
 			Password:          passwordLoginForm.PassWord,
 			EncryptedPassword: rsp.PassWord,
 		}); passErr != nil {

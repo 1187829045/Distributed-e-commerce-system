@@ -5,9 +5,11 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/spf13/viper"
 	"go.uber.org/zap" // 导入 zap 日志库
 	"mxshop-api/user-web/global"
 	"mxshop-api/user-web/iniitialize" // 导入自定义包，用于初始化路由
+	"mxshop-api/user-web/utils"
 	myvalidator "mxshop-api/user-web/validator"
 )
 
@@ -27,7 +29,18 @@ func main() {
 		fmt.Println("翻译失败")
 		panic(err)
 	}
+	//5. 初始化srv的连接
+	iniitialize.InitSrvConn()
 
+	viper.AutomaticEnv()
+	//如果是本地开发环境端口号固定，线上环境启动获取端口号
+	debug := viper.GetBool("MXSHOP_DEBUG")
+	if !debug {
+		port, err := utils.GetFreePort()
+		if err == nil {
+			global.ServerConfig.Port = port
+		}
+	}
 	// 注册验证器
 	//用于获取当前的验证引擎实例
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

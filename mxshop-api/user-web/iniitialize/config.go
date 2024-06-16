@@ -41,7 +41,7 @@ func InitConfig() {
 		panic(err) // 如果解析配置文件失败，则抛出错误
 	}
 	zap.S().Infof("配置信息: &v", global.NacosConfig) // 打印配置信息
-
+	//第十周
 	// 从 nacos 中读取配置信息
 	sc := []constant.ServerConfig{
 		{

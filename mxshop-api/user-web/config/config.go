@@ -43,8 +43,7 @@ type ServerConfig struct {
 	JWTInfo     JWTConfig     `mapstructure:"jwt" json:"jwt"`     // JWT 配置信息
 	AliSmsInfo  AliSmsConfig  `mapstructure:"sms" json:"sms"`     // 阿里短信服务配置信息
 	RedisInfo   RedisConfig   `mapstructure:"redis" json:"redis"` // Redis 配置信息
-	// ConsulInfo 被注释掉的 Consul 配置信息
-	// ConsulInfo  ConsulConfig  `mapstructure:"consul" json:"consul"`
+	ConsulInfo  ConsulConfig  `mapstructure:"consul" json:"consul"`
 }
 
 // NacosConfig 用于存储 Nacos 的配置信息

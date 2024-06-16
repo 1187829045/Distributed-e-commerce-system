@@ -1,14 +1,7 @@
-name: 'user-web'
-port: 8021
-user_srv:
-  host: '127.0.0.1'
-  port: 50051
-jwt:
-  key: 'zZ8XBq#wTnUHNnm0sangBJ^&qIFnZDe8'
-sms:
-  key: ''
-  secrect: ''
-  expire: 300
-redis:
-  host: '192.168.128.135'
-  port: 6380
+host: '192.168.128.135'
+port: 8848
+namespace: 'eaa72e66-8bf8-4ed3-a9cb-08067dd75e77'
+user: 'nacos'
+password: 'nacos'
+dataid: 'user-web.json'
+group: 'dev'
