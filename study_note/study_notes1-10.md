@@ -10,7 +10,6 @@ rpc 技术在架构设计上由四部分 客户端，客户端存根，服务端
 
 ## 第二天
 
-第四周第三章,第四章
 安装学习了grpc
 
 gRPC（gRPC Remote Procedure Call）是一个高性能、通用的开源远程过程调用（RPC）框架，由Google开发。
@@ -19,7 +18,7 @@ gRPC（gRPC Remote Procedure Call）是一个高性能、通用的开源远程�
 服务端的数据流模式：这种模式是客户端发起一次请求，服务端返回一段连续的数据流。
 客户端数据来模式：与上面相反，客户端源源不断向服务端发送数据流
 双向数据流模式：上面综合，比如聊天软件
-第五周第一章
+
 学习protobuf grpc
 
 # 第三天
@@ -53,7 +52,7 @@ grpc客户端与服务端流程
 
 ### 服务端
 
-// 创建一个新的 gRPC 服务器实例
+`// 创建一个新的 gRPC 服务器实例
 g := grpc.NewServer()
 // 注册 Greeter 服务到 gRPC 服务器
 // 将 Server 的实例传递给生成的 RegisterGreeterServer 方法
@@ -65,10 +64,10 @@ lis, err := net.Listen("tcp", "0.0.0.0:8080")
 if err := g.Serve(lis); err != nil {
 log.Fatalf("failed to serve: %v", err)
 }
-
+`
 ### 客户端
 
-// 创建一个与 gRPC 服务器的连接
+`// 创建一个与 gRPC 服务器的连接
 conn, err := grpc.Dial("127.0.0.1:8080", grpc.WithInsecure()) // 改为 8080 端口
 // 延迟关闭连接，确保程序结束前连接会被关闭
 defer conn.Close()
@@ -76,7 +75,7 @@ defer conn.Close()
 c := proto.NewGreeterClient(conn)
 // 调用 服务端定义的方法
 r, err := c.SayHello(context.Background(), &proto.HelloRequest{Name: "bobby"})
-
+`
 ## 第六周
 ### 单体应用
 
@@ -92,7 +91,6 @@ r, err := c.SayHello(context.Background(), &proto.HelloRequest{Name: "bobby"})
 前后端分离系统开发接口管理痛点
 
 # 第四天
-## 第六周
 ### yapi
 Yapi 是一个可视化的接口管理工具，主要用于接口的管理、文档的生成和测试的执行.
 它提供了一个用户友好的界面，让开发团队能够更轻松地管理接口，生成接口文档，并进行接口测试。
@@ -154,21 +152,21 @@ db.Model(&product).Updates(Product{Price: 200, Code: sql.NullString{"", true}})
 
 #### 模型mode
 GORM 通过将 Go 结构体（Go structs） 映射到数据库表来简化数据库交互。 了解如何在GORM中定义模型，是充分利用GORM全部功能的基础。
-type Product struct {
+`type Product struct {
 gorm.Model                // GORM 提供的公共模型，包含 ID、CreatedAt、UpdatedAt、DeletedAt 字段
 Code       sql.NullString // 商品编码
 Price      uint           // 商品价格
-}
+}`
 
 ##### // gorm.Model 的定义
 
-type Model struct {
+``type Model struct {
 ID        uint           `gorm:"primaryKey"`
 CreatedAt time.Time
 UpdatedAt time.Time
 DeletedAt gorm.DeletedAt `gorm:"index"`
 }
-
+``
 使用 GORM Migrator 创建表时，不会创建被忽略的字段
 update语句可以更新0值，updates语句不可以
 
@@ -183,16 +181,16 @@ update语句可以更新0值，updates语句不可以
 
 ### gin学习
 
-type Person struct {
+``type Person struct {
 ID   int    `uri:"id" binding:"required"`    // ID字段从URI中的id参数获取值，并且是必需的
 Name string `uri:"name" binding:"required"`  // Name字段从URI中的name参数获取值，并且是必需的
 }
-
-if err := c.ShouldBindUri(&person); err != nil {
+``
+`if err := c.ShouldBindUri(&person); err != nil {
 // 如果绑定失败，返回404状态码
 c.Status(404)
 return
-}
+}`
 
 // 处理/post请求的处理函数
 func getPost(c *gin.Context) {
@@ -243,7 +241,7 @@ md5一个信息摘要算法，是一种常用的散列函数，用于生成信�
 2.数据库同时存储MD5值和salt值，验证正确性使用salt进行MD5即可
 
 ##### //举例
-
+`
 func genMd5(code string) string {
 // 创建一个新的MD5哈希对象
 Md5 := md5.New()
@@ -253,19 +251,19 @@ _, _ = io.WriteString(Md5, code)
 // 计算输入字符串的MD5哈希值，并将其转换为十六进制字符串后返回
 return hex.EncodeToString(Md5.Sum(nil))
 }
-
+`
 //MD5 彩虹表是一种预计算的哈希值查找表，用于通过反向查找快速破解 MD5 哈希值。为了防止这样的攻击，常见的做法是使用 "盐"（salt）来增强哈希算法的安全性。
 fmt.Sprintf("$pbkdf2-sha512$%s$%s", salt, encodedPwd) 这一行代码中，$ 符号的作用是作为分隔符，用于将不同部分的字符串连接起来。
 具体来说，这个字符串格式化操作的目的是生成一个符合某种规范的加密密码字符串。
 
-// DB 定义了一个包含数据库操作相关信息的结构体
+`// DB 定义了一个包含数据库操作相关信息的结构体
 type DB struct {
 Config       *Config   // 指向数据库配置信息的指针
 Error        error     // 表示数据库操作过程中的错误，如果为 nil 则表示操作成功
 RowsAffected int64     // 表示数据库操作影响的行数，如插入、更新、删除操作影响的行数
 Statement    *Statement // 指向数据库语句的指针，用于执行特定的 SQL 语句或事务操作
 clone        int       // 克隆次数或其他用途的整数字段，具体用途需要根据上下文进一步确认
-}
+}`
 第八周over
 
 ## 学习总结:
@@ -282,7 +280,7 @@ clone        int       // 克隆次数或其他用途的整数字段，具体用
 这对于大型应用程序或者微服务架构尤为重要，不同的服务或模块可以共享同一个数据库连接实例，实现数据的一致性和统一管理。
 
 随后定义了protobuf,定义了用户的常见服务
-service User {
+`service User {
 // 定义 User 服务
 rpc GetUserList(PageInfo) returns (UserListResponse); // 获取用户列表
 rpc GetUserByMobile(MobileRequest) returns (UserInfoResponse); // 通过手机号查询用户
@@ -290,7 +288,7 @@ rpc GetUserById(IdRequest) returns (UserInfoResponse); // 通过 ID 查询用户
 rpc CreateUser(CreateUserInfo) returns (UserInfoResponse); // 添加用户
 rpc UpdateUser(UpdateUserInfo) returns (google.protobuf.Empty); // 更新用户
 rpc CheckPassWord(PasswordCheckInfo) returns (CheckResponse); // 检查密码
-}
+}`
 学习了 MD5盐值加密
 
 ### 随后建立了一个hander包
@@ -356,7 +354,7 @@ YAML 使用简洁的语法，避免了大量的符号和标记，减少了人为
 跨语言支持：
 YAML 是一种语言无关的格式，多种编程语言都有相应的解析库和工具支持。
 
-## Cookie 和 Session ID 
+## Cookie 和 Session ID
 用于在客户端（浏览器）和服务器之间维护状态和识别用户身份的重要工具：
 
 ### Cookie：
@@ -383,9 +381,9 @@ Session ID 是在用户与服务器建立会话时生成的唯一标识符。通
 
 ### 特点：
 
- 唯一性：每个 Session ID 在一个时间段内应该是唯一的。
+唯一性：每个 Session ID 在一个时间段内应该是唯一的。
 
- 时效性：通常随着会话的结束或过期而失效，可以设置过期时间来管理会话的有效期限。
+时效性：通常随着会话的结束或过期而失效，可以设置过期时间来管理会话的有效期限。
 
 ## Cookie 和 Session ID 的关系：
 
@@ -431,11 +429,11 @@ zap 是一个高性能的、结构化的日志库，专为速度和低内存使�
 
 ### 为什么要使用同一个logger实例
 
-#### 一致的日志格式和风格： 
+#### 一致的日志格式和风格：
 使用同一个 logger 实例可以确保整个应用程序的日志输出具有统一的格式、风格和标准，这有助于提高日志的可读性和易用性。
 开发人员和运维团队在查看日志时不需要适应不同的输出方式，减少了理解和分析日志的难度。
 
-#### 性能优化： 
+#### 性能优化：
 一些日志库在初始化时可能会进行一些预处理或者资源分配，例如打开文件、建立连接等。如果在整个应用程序中重复创建不同的 logger 实例，
 可能会增加不必要的开销和资源消耗。而使用同一个 logger 实例可以避免这种开销，提高应用程序的性能和效率。
 
@@ -443,10 +441,10 @@ zap 是一个高性能的、结构化的日志库，专为速度和低内存使�
 使用同一个 logger 实例可以更方便地进行集中管理和配置。例如，可以在应用程序的某个地方统一配置日志级别、输出格式、日志文件路径等，
 而不是在多个地方分散配置。这样做不仅简化了维护工作，还能确保配置的一致性和正确性。
 
-#### 简化日志记录代码： 
+#### 简化日志记录代码：
 全局使用同一个 logger 实例可以简化日志记录代码。开发人员无需在每个日志记录点重复创建 logger 实例或者传递 logger 实例作为参数， 而是直接使用全局的 logger 实例即可。
 
-#### 日志追踪和审计： 
+#### 日志追踪和审计：
 如果应用程序需要实现日志的追踪、审计或者日志分析，使用同一个 logger 实例可以更方便地跟踪和关联不同事件的日志记录，从而实现更精确和细致的日志分析和监控。
 
 ## 初始化配置文件
@@ -468,8 +466,8 @@ viper 实例，v.SetConfigFile(configFileName)设置配置文件路径。然后�
 ### 初始化路由
 首先 创建一个默认的 Gin 引擎实例，包含默认的中间件（日志记录和恢复） Router := gin.Default()，然后定义一个健康检查端点，用于验证服务是否运行。
 使用 CORS 中间件处理跨源资源共享，Router.Use(middlewares.Cors())。创建一个 API 分组，基础路径为 "/u/v1"。 ApiGroup := Router.Group("/u/v1")
- 在 API 分组中初始化与用户相关的路由，router2.InitUserRouter(ApiGroup)。在 API 分组中初始化基础路由，router2.InitBaseRouter(ApiGroup)。
- 返回配置好的 Gin 引擎实例，Router。
+在 API 分组中初始化与用户相关的路由，router2.InitUserRouter(ApiGroup)。在 API 分组中初始化基础路由，router2.InitBaseRouter(ApiGroup)。
+返回配置好的 Gin 引擎实例，Router。
 
 ## 初始化翻译
 修改gin框架中的validator引擎属性，实现定制，直接去网上找到现成的代码。
@@ -477,7 +475,7 @@ viper 实例，v.SetConfigFile(configFileName)设置配置文件路径。然后�
 ## 注册验证器
 获取当前的验证引擎实例binding.Validator.Engine().(*validator.Validate);自定义的手机号验证函数 ValidateMobile 注册到引擎中
 _ = v.RegisterValidation("mobile", myvalidator.ValidateMobile)
-注册手机号验证的错误信息翻译，_ = v.RegisterTranslation("mobile", global.Trans, 
+注册手机号验证的错误信息翻译，_ = v.RegisterTranslation("mobile", global.Trans,
 
 添加手机号验证错误的翻译信息到翻译器中在这个过程中使用到了第三方库
 github.com/go-playground/universal-translator 是一个 Go 语言库，用于支持多语言翻译和本地化的工具。
@@ -588,7 +586,7 @@ Consul 提供服务网格功能，通过内置的代理（Consul Connect）实�
 
 原理：使用一致性哈希算法分配请求，适用于分布式缓存场景，减少服务器变更时的数据迁移。
 优点： 减少数据重新分布，适用于缓存服务器。 适用于需要高一致性的场景。
-缺点： 实现复杂度高。 
+缺点： 实现复杂度高。
 
 ### 加权最少连接数（Weighted Least Connections）
 原理：在最少连接数算法的基础上，考虑服务器的权重。
@@ -602,7 +600,7 @@ Consul 提供服务网格功能，通过内置的代理（Consul Connect）实�
 
 ## 配置中心
 
-### Nacos 
+### Nacos
 是一个开源的动态服务发现、配置管理和服务管理平台，主要用于微服务架构。它由阿里巴巴开源，能够帮助开发者更好地构建、管理和维护分布式系统。
 服务发现和健康检查：
 
