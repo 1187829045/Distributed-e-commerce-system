@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	fmt.Print("this is main.go")
+	fmt.Print("this is alipay_test.go")
 	return
 }

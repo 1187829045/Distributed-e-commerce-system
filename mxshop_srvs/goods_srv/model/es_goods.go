@@ -2,20 +2,20 @@ package model
 
 // EsGoods 是用于 Elasticsearch 中存储商品信息的结构体
 type EsGoods struct {
-	ID          int32   `json:"id"`           // 商品ID
-	CategoryID  int32   `json:"category_id"`  // 分类ID
-	BrandsID    int32   `json:"brands_id"`    // 品牌ID
-	OnSale      bool    `json:"on_sale"`      // 是否上架
-	ShipFree    bool    `json:"ship_free"`    // 是否包邮
-	IsNew       bool    `json:"is_new"`       // 是否新品
-	IsHot       bool    `json:"is_hot"`       // 是否热销
-	Name        string  `json:"name"`         // 商品名称
-	ClickNum    int32   `json:"click_num"`    // 点击数
+	ID          int32   `json:"id"`          // 商品ID
+	CategoryID  int32   `json:"category_id"` // 分类ID
+	BrandsID    int32   `json:"brands_id"`
+	OnSale      bool    `json:"on_sale"`   // 是否在售
+	ShipFree    bool    `json:"ship_free"` // 是否包邮
+	IsNew       bool    `json:"is_new"`    // 是否新品
+	IsHot       bool    `json:"is_hot"`    // 是否热销
+	Name        string  `json:"name"`      // 商品名称
+	ClickNum    int32   `json:"click_num"`
 	SoldNum     int32   `json:"sold_num"`     // 销量
 	FavNum      int32   `json:"fav_num"`      // 收藏数
-	MarketPrice float32 `json:"market_price"` // 市场价
+	MarketPrice float32 `json:"market_price"` // 商场价格
 	GoodsBrief  string  `json:"goods_brief"`  // 商品简介
-	ShopPrice   float32 `json:"shop_price"`   // 商城价
+	ShopPrice   float32 `json:"shop_price"`
 }
 
 // GetIndexName 返回 Elasticsearch 中索引的名称

@@ -13,7 +13,7 @@ import (
 func InitEs() {
 	//初始化连接
 	host := fmt.Sprintf("http://%s:%d", global.ServerConfig.EsInfo.Host, global.ServerConfig.EsInfo.Port)
-	logger := log.New(os.Stdout, "mxshop", log.LstdFlags)
+	logger := log.New(os.Stdout, "shop", log.LstdFlags)
 	var err error
 	global.EsClient, err = elastic.NewClient(elastic.SetURL(host), elastic.SetSniff(false),
 		elastic.SetTraceLog(logger))
@@ -21,7 +21,7 @@ func InitEs() {
 		panic(err)
 	}
 
-	//新建mapping和index
+	//新建mapping和index，mapping 有中文分词器我们要自己手动建立mapping
 	exists, err := global.EsClient.IndexExists(model.EsGoods{}.GetIndexName()).Do(context.Background())
 	if err != nil {
 		panic(err)

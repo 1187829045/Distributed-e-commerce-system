@@ -27,10 +27,10 @@ func main() {
 	IP := flag.String("ip", "0.0.0.0", "ip地址")
 	Port := flag.Int("port", 0, "端口号")
 	// 初始化应用程序的各种组件（日志、配置、数据库、Elasticsearch等）
-	initialize.InitLogger() // 初始化日志系统
-	initialize.InitConfig() // 初始化配置信息
-	initialize.InitDB()     // 初始化数据库连接
-	initialize.InitEs()     // 初始化Elasticsearch连接
+	initialize.InitLogger()
+	initialize.InitConfig()
+	initialize.InitDB()
+	initialize.InitEs() // 初始化ES连接
 	// 输出全局配置信息到日志
 	zap.S().Info(global.ServerConfig)
 	// 解析命令行参数
@@ -101,6 +101,7 @@ func main() {
 	}()
 
 	// 接收终止信号
+	//优雅的退出
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit

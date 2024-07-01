@@ -29,7 +29,7 @@ func main() {
 
 	// 创建一个带有 Suger 的 logger 实例，用于方便的日志记录
 	su := logger.Sugar()
-	// 确保在 main 函数结束时，将 logger 的缓冲区刷新到日志文件
+	// 确保在 alipay_test 函数结束时，将 logger 的缓冲区刷新到日志文件
 	defer su.Sync()
 
 	// 定义一个 URL 字符串

@@ -80,7 +80,11 @@ type Goods struct {
 	GoodsFrontImage string   `gorm:"type:varchar(200);not null"`
 }
 
+// 同步商品到ES中，降低耦合性
+// AfterCreate 是 Goods 结构体的方法，用于在 Goods 对象创建后执行一些操作
+
 func (g *Goods) AfterCreate(tx *gorm.DB) (err error) {
+	// 构建 EsGoods 对象，将 Goods 对象的字段映射到 EsGoods 对象
 	esModel := EsGoods{
 		ID:          g.ID,
 		CategoryID:  g.CategoryID,
@@ -92,18 +96,28 @@ func (g *Goods) AfterCreate(tx *gorm.DB) (err error) {
 		Name:        g.Name,
 		ClickNum:    g.ClickNum,
 		SoldNum:     g.SoldNum,
-		FavNum:      g.FavNum,
-		MarketPrice: g.MarketPrice,
+		FavNum:      g.FavNum,      // 设置商品的收藏数量
+		MarketPrice: g.MarketPrice, // 设置商品的市场价格
 		GoodsBrief:  g.GoodsBrief,
 		ShopPrice:   g.ShopPrice,
 	}
 
-	_, err = global.EsClient.Index().Index(esModel.GetIndexName()).BodyJson(esModel).Id(strconv.Itoa(int(g.ID))).Do(context.Background())
-	if err != nil {
-		return err
+	// 使用 Elasticsearch 客户端将 esModel 索引到 Elasticsearch 中
+	_, err = global.EsClient.Index(). // 创建索引请求
+						Index(esModel.GetIndexName()). // 指定索引名称
+						BodyJson(esModel).             // 指定索引内容为 esModel 的 JSON 表示
+						Id(strconv.Itoa(int(g.ID))).
+						Do(context.Background())
+	if err != nil { // 如果索引操作出错
+		return err // 返回错误
 	}
+
+	// 返回 nil 表示操作成功
 	return nil
 }
+
+//商品的更新
+// AfterUpdate 是一个 GORM 钩子函数，在使用 GORM（一个用于 Go 语言的 ORM 库）更新 Goods 对象后会被自动调用。
 
 func (g *Goods) AfterUpdate(tx *gorm.DB) (err error) {
 	esModel := EsGoods{
@@ -130,6 +144,8 @@ func (g *Goods) AfterUpdate(tx *gorm.DB) (err error) {
 	}
 	return nil
 }
+
+//在使用 GORM（一个用于 Go 语言的 ORM 库）删除Goods 对象后会被自动调用。
 
 func (g *Goods) AfterDelete(tx *gorm.DB) (err error) {
 	_, err = global.EsClient.Delete().Index(EsGoods{}.GetIndexName()).Id(strconv.Itoa(int(g.ID))).Do(context.Background())

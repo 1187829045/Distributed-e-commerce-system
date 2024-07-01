@@ -51,18 +51,20 @@ func ModelToResponse(goods model.Goods) proto.GoodsInfoResponse {
 }
 func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterRequest) (*proto.GoodsListResponse, error) {
 	//使用es的目的是搜索出商品的id来，通过id拿到具体的字段信息是通过mysql来完成
-	//我们使用es是用来做搜索的， 是否应该将所有的mysql字段全部在es中保存一份
-	//es用来做搜索，这个时候我们一般只把搜索和过滤的字段信息保存到es中
-	//es可以用来当做mysql使用， 但是实际上mysql和es之间是互补的关系， 一般mysql用来做存储使用，es用来做搜索使用
+	//我们使用es是用来做搜索的， 不应该将所有的mysql字段全部在es中保存一份
+	//es用来做搜索，我们一般只把搜索和过滤的字段信息保存到es中
+	//一般mysql用来做存储使用，es用来做搜索使用
 	//es想要提高性能， 就要将es的内存设置的够大， 1k 2k
 
 	// 初始化响应对象
 	goodsListResponse := &proto.GoodsListResponse{}
 
 	// 构建 Elasticsearch 查询条件
+
 	q := elastic.NewBoolQuery()
 	localDB := global.DB.Model(model.Goods{})
-
+	//有keyword最好用es去做
+	//使用es就是进行商品的搜索
 	// 关键词搜索
 	if req.KeyWords != "" {
 		q = q.Must(elastic.NewMultiMatchQuery(req.KeyWords, "name", "goods_brief"))
@@ -70,7 +72,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 
 	// 是否热门商品筛选
 	if req.IsHot {
-		localDB = localDB.Where(model.Goods{IsHot: true})
+		//localDB = localDB.Where(model.Goods{IsHot: true})
 		q = q.Filter(elastic.NewTermQuery("is_hot", req.IsHot))
 	}
 
@@ -93,8 +95,9 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	}
 
 	// 根据商品分类筛选
+	//一级类目下的三级类目就不用es,复杂的关系查询用mysql
 	var subQuery string
-	categoryIds := make([]interface{}, 0)
+	categoryIds := make([]interface{}, 0) //将[]int32 改为[]interface{}
 	if req.TopCategory > 0 {
 		// 查询顶级分类及其子分类的 ID
 		var category model.Category
@@ -154,7 +157,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	for _, value := range result.Hits.Hits {
 		goods := model.EsGoods{}
 		_ = json.Unmarshal(value.Source, &goods)
-		goodsIds = append(goodsIds, goods.ID)
+		goodsIds = append(goodsIds, goods.ID) //拿到商品的ID
 	}
 	goodsListResponse.Total = int32(result.Hits.TotalHits.Value)
 
@@ -175,6 +178,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 }
 
 // 现在用户提交订单有多个商品，你得批量查询商品的信息吧
+
 func (s *GoodsServer) BatchGetGoods(ctx context.Context, req *proto.BatchGoodsIdInfo) (*proto.GoodsListResponse, error) {
 	goodsListResponse := &proto.GoodsListResponse{}
 	var goods []model.Goods
@@ -231,19 +235,21 @@ func (s *GoodsServer) CreateGoods(ctx context.Context, req *proto.CreateGoodsInf
 	}
 
 	//srv之间互相调用了
+	//解决数据的一致性
 	tx := global.DB.Begin()
-	result := tx.Save(&goods)
+	result := tx.Save(&goods) //自动调用AfterCreate
 	if result.Error != nil {
 		tx.Rollback()
 		return nil, result.Error
 	}
-	tx.Commit()
+	tx.Commit() //手动提交
 	return &proto.GoodsInfoResponse{
 		Id: goods.ID,
 	}, nil
 }
 
 func (s *GoodsServer) DeleteGoods(ctx context.Context, req *proto.DeleteGoodsInfo) (*emptypb.Empty, error) {
+	// result.RowsAffected != nil,有漏洞
 	if result := global.DB.Delete(&model.Goods{BaseModel: model.BaseModel{ID: req.Id}}, req.Id); result.Error != nil {
 		return nil, status.Errorf(codes.NotFound, "商品不存在")
 	}

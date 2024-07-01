@@ -48,7 +48,7 @@ type Delivery struct {
 	Goods   int32  `gorm:"type:int;index"`
 	Nums    int32  `gorm:"type:int"`
 	OrderSn string `gorm:"type:varchar(200)"`
-	Status  string `gorm:"type:varchar(200)"` //1. 表示等待支付 2. 表示支付成功 3. 失败
+	Status  string `gorm:"type:varchar(200)"` //1. 表示等待支付 2. 表示支付成功 3. 失败，TCP事务
 }
 
 type StockSellDetail struct {

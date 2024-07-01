@@ -308,10 +308,11 @@ func (*InventoryServer) CancelSell(ctx context.Context, req *proto.SellInfo) (*e
 	return &emptypb.Empty{}, nil
 }
 
+type OrderInfo struct {
+	OrderSn string
+}
+
 func AutoReback(ctx context.Context, msgs ...*primitive.MessageExt) (consumer.ConsumeResult, error) {
-	type OrderInfo struct {
-		OrderSn string
-	}
 	for i := range msgs {
 		//既然是归还库存，那么我应该具体的知道每件商品应该归还多少， 但是有一个问题是什么？重复归还的问题
 		//所以说这个接口应该确保幂等性， 你不能因为消息的重复发送导致一个订单的库存归还多次， 没有扣减的库存你别归还
