@@ -10,7 +10,8 @@ type JWTConfig struct {
 	SigningKey string `mapstructure:"key" json:"key"`
 }
 
-// 分布式
+// jaeger,跟踪链
+
 type JaegerConfig struct {
 	Host string `mapstructure:"host" json:"host"`
 	Port int    `mapstructure:"port" json:"port"`
@@ -30,7 +31,8 @@ type ServerConfig struct {
 	UserSrvInfo GoodsSrvConfig `mapstructure:"goods_srv" json:"goods_srv"`
 	JWTInfo     JWTConfig      `mapstructure:"jwt" json:"jwt"`
 	ConsulInfo  ConsulConfig   `mapstructure:"consul" json:"consul"`
-	JaegerInfo  JaegerConfig   `mapstructure:"consul" json:"jaeger"`
+	//引入jagerInfo
+	JaegerInfo JaegerConfig `mapstructure:"consul" json:"jaeger"`
 }
 
 type NacosConfig struct {

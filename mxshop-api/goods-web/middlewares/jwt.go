@@ -38,7 +38,7 @@ func JWTAuth() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-
+			//token = strings.Split(token, " ")[1]
 			// 如果令牌无效或其他错误，返回未登录的错误响应并中止请求处理
 			c.JSON(http.StatusUnauthorized, "未登陆")
 			c.Abort()

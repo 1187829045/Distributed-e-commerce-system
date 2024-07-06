@@ -50,7 +50,7 @@ Value() (Value, error)
 grpc_health_v1.RegisterHealthServer(server, health.NewServer())
 
 ## 配置 Consul 客户端并注册
-
+sudo docker run -d -p 8500:8500 -p 8301:8301 -p 8302:8302 -p 8600:8600/udp consul consul agent -dev -client=0.0.0.0
 	// 配置 Consul 客户端
 	cfg := api.DefaultConfig()
 	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host,
@@ -125,6 +125,7 @@ Z 表示时区，通常为UTC时区。
 
 设备管理：通过内网穿透技术，可以远程管理和访问设备，例如监控摄像头、物联网设备或者家庭网络中的设备，而不需要物理上连接到同一网络中。
 续断 nacos配置要和回调port一致
+docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX=512m -e JVM_XMN=256m -p 8848:8848 -d nacos/nacos-server:latest
 ## 第十二天
 行锁粒度比较细，只会满足符合条件的数据，在没有索引的情况下，行锁升级为表锁。如果没有满足条件的结果，不会锁表（有索引的情况）。
 
@@ -836,6 +837,7 @@ CAP和BASE理论提供了理解和设计分布式系统的重要框架，帮助�
 
 TCC（Try-Confirm-Cancel）是一种分布式事务实现方案，用于确保跨多个服务或资源的事务一致性。TCC模型将一个事务分为三个阶段：尝试（Try）、确认（Confirm）和取消（Cancel）。以下是TCC分布式事务实现方案的详细介绍。
 TCC模型概述
+TCC模型概述
 
 #### Try阶段：
 
@@ -916,4 +918,47 @@ TCC模型概述
 解压缩 sudo unzip install.zip
 cd install
 sudo docker-compose up
+
+
+### 链路追踪
+
+sudo docker run \
+--rm \
+--name jaeger \
+-p 6831:6831/udp \
+-p16686:16686 \
+jaegertracing/all-in-one:latest
+
+
+### kong的安装
+docker run -d --name kong-database -p 5432:5432 -e "POSTGRES_USER=kong" -e "POSTGRES_DB=kong" -e "POSTGRES_PASSWORD=kong" -e "POSTGRES_DB=kong" postgres:12
+
+sudo docker run --rm -e "KONG_DATABASE=postgres" -e "KONG_PG_HOST=192.168.128.128" -e "KONG_PG_PASSWORD=kong" -e "POSTGRES_USER=kong" -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" kong kong migrations bootstrap
+
+sudo curl -Lo kong.2.5.0.amd64.deb "https://download.konghq.com/gateway-2.x-ubuntu-$(lsb_release -cs)/pool/all/k/kong/kong_2.5.0_amd64.deb"
+curl -Lo kong-enterprise-edition-2.6.1.0.all.deb "https://packages.konghq.com/public/gateway-legacy/deb/ubuntu/pool/xenial/main/k/ko/kong-enterprise-edition_2.6.1.0/kong-enterprise-edition_2.6.1.0_all.deb"
+sudo apt install -y ./kong-enterprise-edition-2.6.1.0.all.deb
+sudo systemctl stop firewalld.service
+sudo systemctl restart docker
+sudo cp /etc/kong/kong.conf.default /etc/kong/kong.conf
+sudo vim /etc/kong/kong.conf
+sudo kong start -c /etc/kong/kong.conf
+
+### kongga安装
+
+sudo docker run -d -p 1337:1337 --name konga pantsel/konga
+
+### 安装jenkins
+https://blog.csdn.net/xhmico/article/details/136535498
+cd /soft/jenkins
+java -jar jenkins.war --httpPort=8088
+3cb81fac55b54e0d83650c8de9700f5c
+This may also be found at: /home/llb/.jenkins/secrets/initialAdminPassword
+
+修改插件地址
+sudo sed -i 's/https:\/\/updates.jenkins.io\/download/http:\/\/mirrors.tuna.tsinghua.edu.cn\/jenkins/g' /var/lib/jenkins/updates/default.json
+sudo sed -i 's/http:\/\/www.google.com/http:\/\/www.baidu.com/g' /var/lib/jenkins/updates/default.json
+
+http://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json
+
 
