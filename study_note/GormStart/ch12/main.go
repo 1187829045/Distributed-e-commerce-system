@@ -12,6 +12,7 @@ import (
 )
 
 // User 拥有并属于多种 language，`user_languages` 是连接表
+
 type User3 struct {
 	gorm.Model
 	Languages []Language `gorm:"many2many:user_languages;"`
@@ -22,13 +23,8 @@ type Language struct {
 	Name string
 }
 
-/*
-1. 我们自己定义表名是什么
-2. 统一的给所有的表名加上一个前缀
- */
 func main() {
-	// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	dsn := "root:root@tcp(192.168.0.104:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -47,17 +43,15 @@ func main() {
 		panic(err)
 	}
 
-	//db.AutoMigrate(&User3{})
+	db.AutoMigrate(&User3{})
 
-	//languages := []Language{}
-	//languages = append(languages, Language{Name:"go"})
-	//languages = append(languages, Language{Name:"java"})
+	languages := []Language{}
+	languages = append(languages, Language{Name: "go"})
+	languages = append(languages, Language{Name: "java"})
 	//user := User3{
 	//	Languages: languages,
 	//}
-	//
 	//db.Create(&user)
-
 	//var user User3
 	//db.Preload("Languages").First(&user)
 	//for _, language := range user.Languages{
@@ -65,12 +59,12 @@ func main() {
 	//}
 
 	//如果我已经取出一个用户来了，但是这个用户我们之前没有使用preload来加载对应的Languages
-	//不是说用户有language我们就一定要取出来、
+	//不是说用户有language我们就一定要取出来
 	var user User3
 	db.First(&user)
 	var laguages []Language
 	_ = db.Model(&user).Association("Languages").Find(&laguages)
-	for _, language := range laguages{
+	for _, language := range laguages {
 		fmt.Println(language.Name)
 	}
 }

@@ -49,7 +49,7 @@ func Register(address string, port int, name string, tags []string, id string) e
 func AllServices() {
 	// 创建默认的 Consul 配置
 	cfg := api.DefaultConfig()
-	cfg.Address = "192.168.128.135:8500" // 指定 Consul 服务器的地址
+	cfg.Address = "192.168.128.128:8500" // 指定 Consul 服务器的地址
 
 	// 创建一个新的 Consul 客户端
 	client, err := api.NewClient(cfg)
@@ -75,7 +75,7 @@ func AllServices() {
 func FilterService() {
 	// 创建默认的 Consul 配置
 	cfg := api.DefaultConfig()
-	cfg.Address = "192.168.128.135:8500" // 指定 Consul 服务器的地址
+	cfg.Address = "192.168.128.128:8500" // 指定 Consul 服务器的地址
 
 	// 创建一个新的 Consul 客户端
 	client, err := api.NewClient(cfg)
@@ -99,7 +99,7 @@ func FilterService() {
 
 func main() {
 	// 注册服务
-	_ = Register("192.168.128.135", 8021, "user-web", []string{"mxshop", "bobby"}, "user-web")
+	_ = Register("192.168.128.128", 8021, "user-web", []string{"shop", "llb"}, "user-web")
 
 	// 获取并打印所有服务
 	AllServices()

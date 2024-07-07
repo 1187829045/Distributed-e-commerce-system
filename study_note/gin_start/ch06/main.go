@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"OldPackageTest/gin_start/ch06/proto"
+	"sale_master/study_note/gin_start/ch06/proto"
 )
 
 func main() {
@@ -28,6 +28,7 @@ func returnProto(c *gin.Context) {
 
 func moreJSON(c *gin.Context) {
 	var msg struct {
+		//定义了一个名为 Name 的结构体字段，并使用了结构体标签来指定在进行JSON序列化和反序列化时，这个字段应该映射到JSON对象中的 user 字段。
 		Name    string `json:"user"`
 		Message string
 		Number  int

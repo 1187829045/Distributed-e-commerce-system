@@ -6,23 +6,16 @@ import (
 )
 
 func main() {
-	// 创建一个默认的Gin路由器，带有默认的中间件：日志和恢复中间件
 	router := gin.Default()
 
-	// 创建一个用于商品相关路由的分组
 	goodsGroup := router.Group("/goods")
 	{
-		// 定义一个用于列出商品的GET路由
 		goodsGroup.GET("", goodsList)
 
-		// 定义一个用于获取特定商品详细信息的GET路由
-		// 路由中包括URL中的ID和操作
 		goodsGroup.GET("/:id/:action/add", goodsDetail)
 
-		// 定义一个用于创建新商品的POST路由
 		goodsGroup.POST("", createGoods)
 	}
-
 	// 在端口8083上启动Gin服务器
 	router.Run(":8083")
 }

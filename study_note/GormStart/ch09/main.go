@@ -10,7 +10,9 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+//belong to
 // `User` 属于 `Company`，`CompanyID` 是外键
+
 type User struct {
 	gorm.Model
 	Name      string
@@ -23,10 +25,8 @@ type Company struct {
 	Name string
 }
 
-
 func main() {
-	// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	dsn := "root:root@tcp(192.168.0.104:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -55,12 +55,10 @@ func main() {
 	//})
 
 	db.Create(&User{
-		Name:      "bobby2",
+		Name: "bobby2",
 		Company: Company{
-			ID:1,
+			ID: 1,
 		},
 	})
-
-
 
 }

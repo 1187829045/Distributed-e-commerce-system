@@ -13,7 +13,7 @@ import (
 
 type NewUser struct {
 	ID           uint
-	MyName         string `gorm:"column:name"`
+	MyName       string `gorm:"column:name"`
 	Email        *string
 	Age          uint8
 	Birthday     *time.Time
@@ -21,13 +21,11 @@ type NewUser struct {
 	ActivedAt    sql.NullTime
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
-	Deleted gorm.DeletedAt
+	Deleted      gorm.DeletedAt //删除时间
 }
 
-
 func main() {
-	// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	dsn := "root:root@tcp(192.168.0.104:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -51,9 +49,9 @@ func main() {
 	//var users = []NewUser{{MyName: "jinzhu1"}, {MyName: "jinzhu2"}, {MyName: "jinzhu3"}}
 	//db.Create(&users)
 
-	db.Unscoped().Delete(&NewUser{ID:2})
-
-	//db.Delete(&NewUser{}, 1)
+	//硬删除
+	db.Unscoped().Delete(&NewUser{ID: 2})
+	//db.Delete(&NewUser{}, 1)//软删除
 	//var users []NewUser
 	//db.Find(&users)
 	//for _, user := range users{

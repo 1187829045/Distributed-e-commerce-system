@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-// `User` 属于 `Company`，`CompanyID` 是外键
 type User struct {
 	gorm.Model
 	CreditCards []CreditCard `gorm:"foreignKey:UserRefer"`
@@ -24,8 +23,7 @@ type CreditCard struct {
 }
 
 func main() {
-	// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	dsn := "root:root@tcp(192.168.0.104:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -48,9 +46,9 @@ func main() {
 
 	//在大型的系统中，我个人不建议使用外键约束，外键约束也有很大的优点： 数据的完整性
 	/*
-	外键约束会让给你的数据很完整，即使是业务代码有些人考虑的不严谨
-	在大型的系统，高并发的系统中一般不使用外键约束，自己在业务层面保证数据的一致性
-	 */
+		外键约束会让给你的数据很完整，即使是业务代码有些人考虑的不严谨
+		在大型的系统，高并发的系统中一般不使用外键约束，自己在业务层面保证数据的一致性
+	*/
 	//user := User{}
 	//db.Create(&user)
 	//db.Create(&CreditCard{
@@ -63,7 +61,7 @@ func main() {
 	//})
 	var user User
 	db.Preload("CreditCards").First(&user)
-	for _, card := range user.CreditCards{
+	for _, card := range user.CreditCards {
 		fmt.Println(card.Number)
 	}
 

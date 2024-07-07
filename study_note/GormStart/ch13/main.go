@@ -14,7 +14,7 @@ import (
 
 type Language struct {
 	gorm.Model
-	Name string
+	Name    string
 	AddTime sql.NullTime //每个记录创建的时候自动加上当前时间加入到AddTime中
 }
 
@@ -22,7 +22,6 @@ type Language struct {
 //	l.AddTime = time.Now()
 //	return
 //}
-
 
 //在gorm中可以通过给某一个struct添加TableName方法来自定义表名
 //func (Language) TableName() string{
@@ -34,8 +33,7 @@ type Language struct {
 2. 统一的给所有的表名加上一个前缀
 */
 func main() {
-	// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	dsn := "root:root@tcp(192.168.0.104:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -49,8 +47,8 @@ func main() {
 	// 全局模式
 	//NamingStrategy和Tablename不能同时配置，
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		NamingStrategy:schema.NamingStrategy{
-			TablePrefix: "mxshop_",
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: "llb_",
 		},
 		Logger: newLogger,
 	})
@@ -60,6 +58,6 @@ func main() {
 
 	db.AutoMigrate(&Language{})
 	db.Create(&Language{
-		Name:"python",
+		Name: "python",
 	})
 }
