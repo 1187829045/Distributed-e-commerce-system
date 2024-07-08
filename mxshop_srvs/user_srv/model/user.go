@@ -1,9 +1,8 @@
 package model
 
 import (
-	"time"
-
 	"gorm.io/gorm"
+	"time"
 )
 
 type BaseModel struct {
@@ -21,6 +20,7 @@ type BaseModel struct {
  3. md5 信息摘要算法
     密码如果不可以反解，用户找回密码
 */
+
 type User struct {
 	BaseModel
 	Mobile   string     `gorm:"index:idx_mobile;unique;type:varchar(11);not null"`
