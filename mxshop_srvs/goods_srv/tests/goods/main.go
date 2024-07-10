@@ -4,17 +4,16 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"mxshop_srvs/goods_srv/proto"
+	"shop_srvs/goods_srv/proto"
 )
-
 
 var brandClient proto.GoodsClient
 var conn *grpc.ClientConn
 
-func TestGetGoodsList(){
+func TestGetGoodsList() {
 	rsp, err := brandClient.GoodsList(context.Background(), &proto.GoodsFilterRequest{
 		TopCategory: 130361,
-		PriceMin: 90,
+		PriceMin:    90,
 		//KeyWords: "深海速冻",
 	})
 	if err != nil {
@@ -26,7 +25,7 @@ func TestGetGoodsList(){
 	}
 }
 
-func TestBatchGetGoods(){
+func TestBatchGetGoods() {
 	rsp, err := brandClient.BatchGetGoods(context.Background(), &proto.BatchGoodsIdInfo{
 		Id: []int32{421, 422, 423},
 	})
@@ -39,7 +38,7 @@ func TestBatchGetGoods(){
 	}
 }
 
-func TestGetGoodsDetail(){
+func TestGetGoodsDetail() {
 	rsp, err := brandClient.GetGoodsDetail(context.Background(), &proto.GoodInfoRequest{
 		Id: 421,
 	})
@@ -50,7 +49,7 @@ func TestGetGoodsDetail(){
 	fmt.Println(rsp.DescImages)
 }
 
-func Init(){
+func Init() {
 	var err error
 	conn, err = grpc.Dial("127.0.0.1:50051", grpc.WithInsecure())
 	if err != nil {

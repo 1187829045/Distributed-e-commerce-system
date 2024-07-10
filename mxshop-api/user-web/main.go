@@ -1,16 +1,16 @@
 package main
 
 import (
-	"fmt" // 导入 fmt 包用于格式化 I/O
+	"fmt"
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
-	"go.uber.org/zap" // 导入 zap 日志库
-	"mxshop-api/user-web/global"
-	"mxshop-api/user-web/iniitialize" // 导入自定义包，用于初始化路由
-	"mxshop-api/user-web/utils"
-	myvalidator "mxshop-api/user-web/validator"
+	"go.uber.org/zap"
+	"shop-api/user-web/global"
+	"shop-api/user-web/iniitialize"
+	"shop-api/user-web/utils"
+	myvalidator "shop-api/user-web/validator"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 
 	viper.AutomaticEnv()
 	//如果是本地开发环境端口号固定，线上环境启动获取端口号
-	debug := viper.GetBool("MXSHOP_DEBUG")
+	debug := viper.GetBool("SHOP_DEBUG")
 	if !debug {
 		port, err := utils.GetFreePort()
 		if err == nil {

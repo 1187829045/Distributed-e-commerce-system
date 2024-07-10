@@ -7,6 +7,7 @@ import (
 )
 
 // 手机号码验证器
+
 func ValidateMobile(fl validator.FieldLevel) bool {
 	mobile := fl.Field().String()
 	//使用正则表达式判断是否合法

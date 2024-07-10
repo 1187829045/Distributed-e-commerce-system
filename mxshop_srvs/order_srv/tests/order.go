@@ -4,17 +4,16 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"mxshop_srvs/order_srv/proto"
+	"shop_srvs/order_srv/proto"
 )
-
 
 var orderClient proto.OrderClient
 var conn *grpc.ClientConn
 
-func TestCreateCartItem(userId, nums, goodsId int32){
+func TestCreateCartItem(userId, nums, goodsId int32) {
 	rsp, err := orderClient.CreateCartItem(context.Background(), &proto.CartItemRequest{
-		UserId: userId,
-		Nums: nums,
+		UserId:  userId,
+		Nums:    nums,
 		GoodsId: goodsId,
 	})
 	if err != nil {
@@ -37,7 +36,7 @@ func TestCartItemList(userId int32) {
 
 func TestUpdateCartItem(id int32) {
 	_, err := orderClient.UpdateCartItem(context.Background(), &proto.CartItemRequest{
-		Id: id,
+		Id:      id,
 		Checked: true,
 	})
 	if err != nil {
@@ -45,7 +44,7 @@ func TestUpdateCartItem(id int32) {
 	}
 }
 
-func Init(){
+func Init() {
 	var err error
 	conn, err = grpc.Dial("127.0.0.1:50051", grpc.WithInsecure())
 	if err != nil {
@@ -81,7 +80,7 @@ func TestGetOrderDetail(orderId int32) {
 
 }
 
-func TestOrderList(){
+func TestOrderList() {
 	rsp, err := orderClient.OrderList(context.Background(), &proto.OrderFilterRequest{
 		UserId: 1,
 	})

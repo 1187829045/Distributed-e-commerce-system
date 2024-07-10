@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm/schema" // 引入 GORM 的数据库模式包
 	"log"
 	"os"
-	"sale_master/mxshop_srvs/user_srv/config"
+	"shop_srvs/user_srv/config"
 	"time"
 )
 
@@ -22,7 +22,7 @@ var (
 // 初始化数据库
 func init() {
 	// 定义数据库连接字符串（DSN），包含用户名、密码、主机地址、数据库名称和一些参数
-	dsn := "root:root@tcp(192.168.128.135:3306)/mxshop_user_srv?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/shop_user_srv?charset=utf8mb4&parseTime=True&loc=Local"
 
 	// 创建新的 GORM 日志对象
 	newLogger := logger.New(

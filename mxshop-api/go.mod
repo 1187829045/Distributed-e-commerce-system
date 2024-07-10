@@ -1,4 +1,4 @@
-module mxshop-api
+module shop-api
 
 go 1.22
 

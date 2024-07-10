@@ -6,9 +6,9 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"mxshop-api/order-web/global"
-	"mxshop-api/order-web/proto"
-	"mxshop-api/order-web/utils/otgrpc"
+	"shop-api/order-web/global"
+	"shop-api/order-web/proto"
+	"shop-api/order-web/utils/otgrpc"
 )
 
 func InitSrvConn() {

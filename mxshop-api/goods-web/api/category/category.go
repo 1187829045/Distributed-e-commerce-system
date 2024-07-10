@@ -10,12 +10,11 @@ import (
 	empty "github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
 
-	"mxshop-api/goods-web/api"
-	"mxshop-api/goods-web/forms"
-	"mxshop-api/goods-web/global"
-	"mxshop-api/goods-web/proto"
+	"shop-api/goods-web/api"
+	"shop-api/goods-web/forms"
+	"shop-api/goods-web/global"
+	"shop-api/goods-web/proto"
 )
-
 
 func List(ctx *gin.Context) {
 	r, err := global.GoodsSrvClient.GetAllCategorysList(context.Background(), &empty.Empty{})
@@ -45,18 +44,18 @@ func Detail(ctx *gin.Context) {
 	subCategorys := make([]interface{}, 0)
 	if r, err := global.GoodsSrvClient.GetSubCategory(context.Background(), &proto.CategoryListRequest{
 		Id: int32(i),
-	});err != nil {
+	}); err != nil {
 		api.HandleGrpcErrorToHttp(err, ctx)
 		return
-	}else{
+	} else {
 		//写文档 特别是数据多的时候很慢， 先开发后写文档
-		for _, value := range r.SubCategorys{
+		for _, value := range r.SubCategorys {
 			subCategorys = append(subCategorys, map[string]interface{}{
-				"id": value.Id,
-				"name": value.Name,
-				"level": value.Level,
+				"id":              value.Id,
+				"name":            value.Name,
+				"level":           value.Level,
 				"parent_category": value.ParentCategory,
-				"is_tab": value.IsTab,
+				"is_tab":          value.IsTab,
 			})
 		}
 		reMap["id"] = r.Info.Id
@@ -79,9 +78,9 @@ func New(ctx *gin.Context) {
 	}
 
 	rsp, err := global.GoodsSrvClient.CreateCategory(context.Background(), &proto.CategoryInfoRequest{
-		Name:                 categoryForm.Name,
-		IsTab:                *categoryForm.IsTab,
-		Level: categoryForm.Level,
+		Name:           categoryForm.Name,
+		IsTab:          *categoryForm.IsTab,
+		Level:          categoryForm.Level,
 		ParentCategory: categoryForm.ParentCategory,
 	})
 	if err != nil {
@@ -134,7 +133,7 @@ func Update(ctx *gin.Context) {
 	}
 
 	request := &proto.CategoryInfoRequest{
-		Id: int32(i),
+		Id:   int32(i),
 		Name: categoryForm.Name,
 	}
 	if categoryForm.IsTab != nil {

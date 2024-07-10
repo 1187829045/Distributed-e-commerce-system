@@ -8,8 +8,8 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
-	"go.uber.org/zap"            // 导入 zap 日志库
-	"mxshop-api/user-web/global" // 导入全局变量包
+	"go.uber.org/zap"          // 导入 zap 日志库
+	"shop-api/user-web/global" // 导入全局变量包
 )
 
 // 注释：github.com/spf13/viper 是一个强大的 Go 语言库，用于读取和管理配置文件。它支持多种格式的配置文件（如 JSON、TOML、YAML、HCL、INI 等），
@@ -24,7 +24,7 @@ func GetEnvInfo(env string) bool {
 
 // InitConfig 初始化配置文件
 func InitConfig() {
-	debug := GetEnvInfo("MXSHOP_DEBUG")                                     // 检查是否处于调试模式
+	debug := GetEnvInfo("shop_DEBUG")                                       // 检查是否处于调试模式
 	configFilePrefix := "config"                                            // 配置文件前缀
 	configFileName := fmt.Sprintf("user-web/%s-pro.yaml", configFilePrefix) // 生产环境配置文件路径
 	if debug {

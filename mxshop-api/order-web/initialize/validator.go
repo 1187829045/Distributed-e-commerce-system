@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"fmt"
-	"mxshop-api/order-web/global"
 	"reflect"
+	"shop-api/order-web/global"
 	"strings"
 
 	"github.com/gin-gonic/gin/binding"
@@ -15,13 +15,13 @@ import (
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 )
 
-func InitTrans(locale string)(err error){
+func InitTrans(locale string) (err error) {
 	//修改gin框架中的validator引擎属性, 实现定制
-	if v, ok := binding.Validator.Engine().(*validator.Validate);ok {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		//注册一个获取json的tag的自定义方法
-		v.RegisterTagNameFunc(func(fld reflect.StructField)string{
+		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-			if name == "-"{
+			if name == "-" {
 				return ""
 			}
 			return name
@@ -36,7 +36,7 @@ func InitTrans(locale string)(err error){
 			return fmt.Errorf("uni.GetTranslator(%s)", locale)
 		}
 
-		switch locale{
+		switch locale {
 		case "en":
 			en_translations.RegisterDefaultTranslations(v, global.Trans)
 		case "zh":

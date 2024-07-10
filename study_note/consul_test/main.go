@@ -10,7 +10,7 @@ import (
 func Register(address string, port int, name string, tags []string, id string) error {
 	// 创建默认的 Consul 配置
 	cfg := api.DefaultConfig()
-	cfg.Address = "192.168.128.135:8500" // 指定 Consul 服务器的地址
+	cfg.Address = "192.168.128.128:8500" // 指定 Consul 服务器的地址
 
 	// 创建一个新的 Consul 客户端
 	client, err := api.NewClient(cfg)
@@ -21,7 +21,7 @@ func Register(address string, port int, name string, tags []string, id string) e
 
 	// 生成对应的健康检查对象
 	check := &api.AgentServiceCheck{
-		HTTP:                           "http://192.168.128.135:8021/health", // 健康检查的 HTTP 地址
+		HTTP:                           "http://192.168.128.128:8021/health", // 健康检查的 HTTP 地址
 		Timeout:                        "5s",                                 // 健康检查超时时间
 		Interval:                       "5s",                                 // 健康检查间隔时间
 		DeregisterCriticalServiceAfter: "10s",                                // 在服务不健康后取消注册的时间

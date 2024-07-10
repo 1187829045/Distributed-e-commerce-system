@@ -13,7 +13,7 @@ import (
 func main() {
 	sc := []constant.ServerConfig{
 		{
-			IpAddr: "192.168.128.135",
+			IpAddr: "192.168.128.128",
 			Port:   8848,
 		},
 	}

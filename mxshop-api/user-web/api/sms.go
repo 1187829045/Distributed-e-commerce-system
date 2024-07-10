@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"mxshop-api/user-web/forms"
 	"net/http"
+	"shop-api/user-web/forms"
 	"strings"
 	"time"
 
@@ -13,7 +13,7 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi" // 导入阿里云短信服务包
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8" // 导入 Redis 客户端
-	"mxshop-api/user-web/global"
+	"shop-api/user-web/global"
 )
 
 // GenerateSmsCode 生成指定长度的随机数字短信验证码
@@ -66,7 +66,7 @@ func SendSms(ctx *gin.Context) {
 	request.ApiName = "SendSms"
 	request.QueryParams["RegionId"] = "cn-beijing"
 	request.QueryParams["PhoneNumbers"] = sendSmsForm.Mobile            // 手机号
-	request.QueryParams["SignName"] = "慕学在线"                            // 阿里云验证过的项目名，自行设置
+	request.QueryParams["SignName"] = "llb"                             // 阿里云验证过的项目名，自行设置
 	request.QueryParams["TemplateCode"] = "SMS_181850725"               // 阿里云的短信模板号，自行设置
 	request.QueryParams["TemplateParam"] = "{\"code\":" + smsCode + "}" // 短信模板中的验证码内容，自动生成
 

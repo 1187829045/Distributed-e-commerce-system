@@ -5,11 +5,11 @@ import (
 	_ "github.com/mbobakov/grpc-consul-resolver" // It's important
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"mxshop-api/goods-web/global"
-	"mxshop-api/goods-web/proto"
+	"shop-api/goods-web/global"
+	"shop-api/goods-web/proto"
 )
 
-func InitSrvConn(){
+func InitSrvConn() {
 	consulInfo := global.ServerConfig.ConsulInfo
 	userConn, err := grpc.Dial(
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", consulInfo.Host, consulInfo.Port, global.ServerConfig.UserSrvInfo.Name),

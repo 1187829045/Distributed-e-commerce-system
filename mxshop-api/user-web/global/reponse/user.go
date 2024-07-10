@@ -17,9 +17,9 @@ func (j JsonTime) MarshalJSON() ([]byte, error) {
 
 // UserResponse 用户响应结构体，用于返回用户信息的 JSON 序列化
 type UserResponse struct {
-	Id       int32    `json:"id"`       // 用户 ID
-	NickName string   `json:"name"`     // 用户昵称
-	Birthday JsonTime `json:"birthday"` // 用户生日，使用自定义的 JsonTime 类型
-	Gender   string   `json:"gender"`   // 用户性别
-	Mobile   string   `json:"mobile"`   // 用户手机号
+	Id       int32    `json:"id"`
+	NickName string   `json:"name"`
+	Birthday JsonTime `json:"birthday"`
+	Gender   string   `json:"gender"`
+	Mobile   string   `json:"mobile"`
 }

@@ -15,7 +15,7 @@ func main() {
 	// 这个客户端将用于 redsync 与 Redis 通信。
 	// 此外，也可以是任何实现了 `redis.Pool` 接口的连接池。
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr: "192.168.128.136:6379", // 配置 Redis 地址
+		Addr: "192.168.128.128:6379", // 配置 Redis 地址
 	})
 	pool := goredis.NewPool(client) // 创建一个 Redis 连接池
 

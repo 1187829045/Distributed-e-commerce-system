@@ -11,17 +11,17 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"mxshop_srvs/inventory_srv/handler"
-	"mxshop_srvs/inventory_srv/utils/register/consul"
 	"net"
 	"os"
 	"os/signal"
+	"shop_srvs/inventory_srv/handler"
+	"shop_srvs/inventory_srv/utils/register/consul"
 	"syscall"
 
-	"mxshop_srvs/inventory_srv/global"
-	"mxshop_srvs/inventory_srv/initialize"
-	"mxshop_srvs/inventory_srv/proto"
-	"mxshop_srvs/inventory_srv/utils"
+	"shop_srvs/inventory_srv/global"
+	"shop_srvs/inventory_srv/initialize"
+	"shop_srvs/inventory_srv/proto"
+	"shop_srvs/inventory_srv/utils"
 )
 
 func main() {
@@ -70,8 +70,8 @@ func main() {
 
 	//监听库存归还topic
 	c, _ := rocketmq.NewPushConsumer(
-		consumer.WithNameServer([]string{"192.168.0.104:9876"}),
-		consumer.WithGroupName("mxshop-inventory"),
+		consumer.WithNameServer([]string{"192.168.128.128:9876"}),
+		consumer.WithGroupName("shop-inventory"),
 	)
 
 	if err := c.Subscribe("order_reback", consumer.MessageSelector{}, handler.AutoReback); err != nil {

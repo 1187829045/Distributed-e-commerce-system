@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"mxshop_srvs/goods_srv/global"
-	"mxshop_srvs/goods_srv/model"
-	"mxshop_srvs/goods_srv/proto"
+	"shop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/model"
+	"shop_srvs/goods_srv/proto"
 )
 
 type GoodsServer struct {
@@ -145,7 +145,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	result, err := global.EsClient.Search().
 		Index(model.EsGoods{}.GetIndexName()).
 		Query(q).
-		From(int(req.Pages)).
+		From(int(req.Pages)). //注意等于0，无法查询到数据
 		Size(int(req.PagePerNums)).
 		Do(context.Background())
 	if err != nil {
@@ -167,13 +167,11 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	if re.Error != nil {
 		return nil, re.Error
 	}
-
 	// 将查询到的商品信息转换为响应对象并返回
 	for _, good := range goods {
 		goodsInfoResponse := ModelToResponse(good)
 		goodsListResponse.Data = append(goodsListResponse.Data, &goodsInfoResponse)
 	}
-
 	return goodsListResponse, nil
 }
 

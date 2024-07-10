@@ -2,9 +2,8 @@ package handler
 
 import (
 	"gorm.io/gorm"
-	"mxshop_srvs/userop_srv/proto"
+	"shop_srvs/userop_srv/proto"
 )
-
 
 type UserOpServer struct {
 	proto.UnimplementedAddressServer
@@ -13,7 +12,7 @@ type UserOpServer struct {
 }
 
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
-	return func (db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
 		if page == 0 {
 			page = 1
 		}

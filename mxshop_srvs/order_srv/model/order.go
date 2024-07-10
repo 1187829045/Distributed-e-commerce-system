@@ -6,7 +6,7 @@ import "time"
 
 type ShoppingCart struct {
 	BaseModel
-	User    int32 `gorm:"type:int;index"` //在购物车列表中我们需要查询当前用户的购物车记录
+	User    int32 `gorm:"type:int;index"` //在购物车列表中我们需要查询当前用户的购物车记录,为什么加索引
 	Goods   int32 `gorm:"type:int;index"` //索引不是越多越好，加索引：我们需要查询时候， 会带来负面问题，1. 会影响插入性能 2. 会占用磁盘
 	Nums    int32 `gorm:"type:int"`       //商品数量
 	Checked bool  //是否选中
@@ -19,8 +19,8 @@ func (ShoppingCart) TableName() string {
 type OrderInfo struct {
 	BaseModel
 
-	User    int32  `gorm:"type:int;index"`                                          //根据用户查询用户订单
-	OrderSn string `gorm:"type:varchar(30);index"`                                  //订单号，我们平台自己生成的订单号
+	User    int32  `gorm:"type:int;index"`                                     //根据用户查询用户订单
+	OrderSn string `gorm:"type:varchar(30);index"`                             //订单号，我们平台自己生成的订单号
 	PayType string `gorm:"type:varchar(20) comment 'alipay(支付宝)， wechat(微信)'"` //便于后期查账
 
 	//status可以考虑使用iota来做

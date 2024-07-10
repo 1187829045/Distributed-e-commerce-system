@@ -6,11 +6,11 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"mxshop-api/userop-web/global"
-	"mxshop-api/userop-web/proto"
+	"shop-api/userop-web/global"
+	"shop-api/userop-web/proto"
 )
 
-func InitSrvConn(){
+func InitSrvConn() {
 	consulInfo := global.ServerConfig.ConsulInfo
 	goodsConn, err := grpc.Dial(
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", consulInfo.Host, consulInfo.Port, global.ServerConfig.GoodsSrvInfo.Name),

@@ -15,11 +15,11 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/hashicorp/consul/api"
-	"mxshop_srvs/goods_srv/global"
-	"mxshop_srvs/goods_srv/handler"
-	"mxshop_srvs/goods_srv/initialize"
-	"mxshop_srvs/goods_srv/proto"
-	"mxshop_srvs/goods_srv/utils"
+	"shop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/handler"
+	"shop_srvs/goods_srv/initialize"
+	"shop_srvs/goods_srv/proto"
+	"shop_srvs/goods_srv/utils"
 )
 
 func main() {

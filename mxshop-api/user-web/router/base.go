@@ -1,9 +1,11 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin" // 导入 Gin 框架
-	"mxshop-api/user-web/api"  // 导入用户相关的 API 处理函数
+	"github.com/gin-gonic/gin"
+	"shop-api/user-web/api" // 导入用户相关的 API 处理函数
 )
+
+//base64 图片验证码
 
 // InitBaseRouter 初始化基础路由
 func InitBaseRouter(Router *gin.RouterGroup) {

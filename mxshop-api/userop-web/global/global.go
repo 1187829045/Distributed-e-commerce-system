@@ -2,8 +2,8 @@ package global
 
 import (
 	ut "github.com/go-playground/universal-translator"
-	"mxshop-api/userop-web/config"
-	"mxshop-api/userop-web/proto"
+	"shop-api/userop-web/config"
+	"shop-api/userop-web/proto"
 )
 
 var (

@@ -9,10 +9,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"mxshop-api/userop-web/global"
+	"shop-api/userop-web/global"
 )
 
-func RemoveTopStruct(fileds map[string]string) map[string]string{
+func RemoveTopStruct(fileds map[string]string) map[string]string {
 	rsp := map[string]string{}
 	for field, err := range fileds {
 		rsp[field[strings.Index(field, ".")+1:]] = err
@@ -51,11 +51,11 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	}
 }
 
-func HandleValidatorError(c *gin.Context, err error){
+func HandleValidatorError(c *gin.Context, err error) {
 	errs, ok := err.(validator.ValidationErrors)
 	if !ok {
 		c.JSON(http.StatusOK, gin.H{
-			"msg":err.Error(),
+			"msg": err.Error(),
 		})
 	}
 	c.JSON(http.StatusBadRequest, gin.H{

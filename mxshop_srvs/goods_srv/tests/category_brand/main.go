@@ -4,16 +4,14 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"mxshop_srvs/goods_srv/proto"
+	"shop_srvs/goods_srv/proto"
 )
-
 
 var brandClient proto.GoodsClient
 var conn *grpc.ClientConn
 
-func TestGetCategoryBrandList(){
-	rsp, err := brandClient.CategoryBrandList(context.Background(), &proto.CategoryBrandFilterRequest{
-	})
+func TestGetCategoryBrandList() {
+	rsp, err := brandClient.CategoryBrandList(context.Background(), &proto.CategoryBrandFilterRequest{})
 	if err != nil {
 		panic(err)
 	}
@@ -21,8 +19,7 @@ func TestGetCategoryBrandList(){
 	fmt.Println(rsp.Data)
 }
 
-
-func Init(){
+func Init() {
 	var err error
 	conn, err = grpc.Dial("127.0.0.1:50051", grpc.WithInsecure())
 	if err != nil {

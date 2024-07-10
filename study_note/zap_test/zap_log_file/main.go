@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go.uber.org/zap" // 导入 zap 日志库
-	"time"            // 导入时间库
+	"go.uber.org/zap"
+	"time"
 )
 
 // Newlogger 函数用于创建一个新的 zap.Logger 实例
@@ -13,6 +13,8 @@ func Newlogger() (*zap.Logger, error) {
 	// 设置日志输出路径，将日志输出到 myproject.log 文件
 	cfg.OutputPaths = []string{
 		"./myproject.log",
+		"stderr",
+		"stdout",
 	}
 
 	// 使用配置构建一个新的 logger 实例，并返回
@@ -22,18 +24,16 @@ func Newlogger() (*zap.Logger, error) {
 func main() {
 	// 使用 Newlogger 函数创建一个新的 logger 实例
 	logger, err := Newlogger()
-	// 如果创建 logger 过程中发生错误，程序将会 panic
 	if err != nil {
 		panic(err)
 	}
-
 	// 创建一个带有 Suger 的 logger 实例，用于方便的日志记录
 	su := logger.Sugar()
 	// 确保在 alipay_test 函数结束时，将 logger 的缓冲区刷新到日志文件
 	defer su.Sync()
 
 	// 定义一个 URL 字符串
-	url := "http://imooc.com"
+	url := "http://baidu.com"
 
 	// 使用 Suger 记录一个 Info 级别的日志消息
 	// 包括一些附加字段：url、attempt（尝试次数）、backoff（退避时间）

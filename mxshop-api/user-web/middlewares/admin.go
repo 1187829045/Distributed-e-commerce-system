@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"mxshop-api/user-web/models"
 	"net/http"
+	"shop-api/user-web/models"
 )
 
 // IsAdminAuth 返回一个 Gin 中间件函数，用于判断当前用户是否为管理员用户。

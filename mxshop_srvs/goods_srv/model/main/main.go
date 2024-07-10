@@ -11,9 +11,9 @@ import (
 	"gorm.io/gorm/schema"
 	"io"
 	"log"
-	"mxshop_srvs/goods_srv/global"
-	"mxshop_srvs/goods_srv/model"
 	"os"
+	"shop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/model"
 	"strconv"
 	"time"
 )
@@ -25,7 +25,7 @@ func genMd5(code string) string {
 }
 
 func main() {
-	dsn := "root:root@tcp(192.168.128.136:3306)/goods_test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/goods_test?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -52,8 +52,10 @@ func main() {
 	Mysql2Es()
 }
 
+//将mysql数据同步到es
+
 func Mysql2Es() {
-	dsn := "root:root@tcp(192.168.128.140:3306)/shop_goods_srv?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/shop_goods_srv?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -75,7 +77,7 @@ func Mysql2Es() {
 		panic(err)
 	}
 
-	host := "http://192.168.128.140:9200"
+	host := "http://192.168.128.128:9200"
 	logger := log.New(os.Stdout, "shop", log.LstdFlags)
 	global.EsClient, err = elastic.NewClient(elastic.SetURL(host), elastic.SetSniff(false),
 		elastic.SetTraceLog(logger))

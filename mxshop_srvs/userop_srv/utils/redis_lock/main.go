@@ -16,7 +16,7 @@ func main() {
 	// implements the `redis.Pool` interface.
 	//这里的变量哪些可以放到global中， redis的配置是否应该在nacos中
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr: "192.168.0.104:6379",
+		Addr: "192.168.128.128:6379",
 	})
 	pool := goredis.NewPool(client) // or, pool := redigo.NewPool(...)
 
@@ -31,7 +31,7 @@ func main() {
 
 	var wg sync.WaitGroup
 	wg.Add(gNum)
-	for i :=0 ;i<gNum;i++ {
+	for i := 0; i < gNum; i++ {
 		go func() {
 			defer wg.Done()
 			mutex := rs.NewMutex(mutexname)
@@ -44,7 +44,7 @@ func main() {
 
 			fmt.Println("获取锁成功")
 
-			time.Sleep(time.Second*8)
+			time.Sleep(time.Second * 8)
 
 			fmt.Println("开始释放锁")
 			if ok, err := mutex.Unlock(); !ok || err != nil {

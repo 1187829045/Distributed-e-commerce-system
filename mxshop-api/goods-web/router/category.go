@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"mxshop-api/goods-web/api/category"
-	"mxshop-api/goods-web/middlewares"
+	"shop-api/goods-web/api/category"
+	"shop-api/goods-web/middlewares"
 )
 
 func InitCategoryRouter(Router *gin.RouterGroup) {

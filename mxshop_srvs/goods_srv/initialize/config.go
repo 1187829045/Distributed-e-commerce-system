@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"mxshop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/global"
 )
 
 func GetEnvInfo(env string) bool {
@@ -21,7 +21,7 @@ func GetEnvInfo(env string) bool {
 
 func InitConfig() {
 	//从配置文件中读取出对应的配置
-	debug := GetEnvInfo("MXSHOP_DEBUG")
+	debug := GetEnvInfo("shop_DEBUG")
 	configFilePrefix := "config"
 	configFileName := fmt.Sprintf("%s-pro.yaml", configFilePrefix)
 	if debug {

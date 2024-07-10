@@ -6,8 +6,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"mxshop-api/user-web/global"
-	"mxshop-api/user-web/proto"
+	"shop-api/user-web/global"
+	"shop-api/user-web/proto"
 )
 
 func InitSrvConn() {
@@ -15,6 +15,7 @@ func InitSrvConn() {
 	userConn, err := grpc.Dial(
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", consulInfo.Host, consulInfo.Port, global.ServerConfig.UserSrvInfo.Name),
 		grpc.WithInsecure(),
+		//负载均衡
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
 	)
 	if err != nil {

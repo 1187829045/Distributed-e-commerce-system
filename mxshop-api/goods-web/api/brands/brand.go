@@ -7,12 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"mxshop-api/goods-web/api"
-	"mxshop-api/goods-web/forms"
-	"mxshop-api/goods-web/global"
-	"mxshop-api/goods-web/proto"
+	"shop-api/goods-web/api"
+	"shop-api/goods-web/forms"
+	"shop-api/goods-web/global"
+	"shop-api/goods-web/proto"
 )
-
 
 func BrandList(ctx *gin.Context) {
 	pn := ctx.DefaultQuery("pn", "0")
@@ -21,7 +20,7 @@ func BrandList(ctx *gin.Context) {
 	pSizeInt, _ := strconv.Atoi(pSize)
 
 	rsp, err := global.GoodsSrvClient.BrandList(context.Background(), &proto.BrandFilterRequest{
-		Pages: int32(pnInt),
+		Pages:       int32(pnInt),
 		PagePerNums: int32(pSizeInt),
 	})
 
@@ -33,7 +32,7 @@ func BrandList(ctx *gin.Context) {
 	result := make([]interface{}, 0)
 	reMap := make(map[string]interface{})
 	reMap["total"] = rsp.Total
-	for _, value := range rsp.Data[pnInt:pnInt*pSizeInt+pSizeInt] {
+	for _, value := range rsp.Data[pnInt : pnInt*pSizeInt+pSizeInt] {
 		reMap := make(map[string]interface{})
 		reMap["id"] = value.Id
 		reMap["name"] = value.Name
@@ -113,7 +112,6 @@ func UpdateBrand(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-
 func GetCategoryBrandList(ctx *gin.Context) {
 	id := ctx.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
@@ -123,7 +121,7 @@ func GetCategoryBrandList(ctx *gin.Context) {
 	}
 
 	rsp, err := global.GoodsSrvClient.GetCategoryBrandList(context.Background(), &proto.CategoryInfoRequest{
-		Id:int32(i),
+		Id: int32(i),
 	})
 	if err != nil {
 		api.HandleGrpcErrorToHttp(err, ctx)
@@ -146,11 +144,11 @@ func GetCategoryBrandList(ctx *gin.Context) {
 func CategoryBrandList(ctx *gin.Context) {
 	//所有的list返回的数据结构
 	/*
-	{
-		"total": 100,
-		"data":[{},{}]
-	}
-	 */
+		{
+			"total": 100,
+			"data":[{},{}]
+		}
+	*/
 	rsp, err := global.GoodsSrvClient.CategoryBrandList(context.Background(), &proto.CategoryBrandFilterRequest{})
 	if err != nil {
 		api.HandleGrpcErrorToHttp(err, ctx)
@@ -165,11 +163,11 @@ func CategoryBrandList(ctx *gin.Context) {
 		reMap := make(map[string]interface{})
 		reMap["id"] = value.Id
 		reMap["category"] = map[string]interface{}{
-			"id": value.Category.Id,
+			"id":   value.Category.Id,
 			"name": value.Category.Name,
 		}
 		reMap["brand"] = map[string]interface{}{
-			"id": value.Brand.Id,
+			"id":   value.Brand.Id,
 			"name": value.Brand.Name,
 			"logo": value.Brand.Logo,
 		}
@@ -190,7 +188,7 @@ func NewCategoryBrand(ctx *gin.Context) {
 
 	rsp, err := global.GoodsSrvClient.CreateCategoryBrand(context.Background(), &proto.CategoryBrandRequest{
 		CategoryId: int32(categoryBrandForm.CategoryId),
-		BrandId:       int32(categoryBrandForm.BrandId),
+		BrandId:    int32(categoryBrandForm.BrandId),
 	})
 	if err != nil {
 		api.HandleGrpcErrorToHttp(err, ctx)
@@ -219,8 +217,8 @@ func UpdateCategoryBrand(ctx *gin.Context) {
 
 	_, err = global.GoodsSrvClient.UpdateCategoryBrand(context.Background(), &proto.CategoryBrandRequest{
 		Id:         int32(i),
-		CategoryId:      int32(categoryBrandForm.CategoryId),
-		BrandId:       int32(categoryBrandForm.BrandId),
+		CategoryId: int32(categoryBrandForm.CategoryId),
+		BrandId:    int32(categoryBrandForm.BrandId),
 	})
 	if err != nil {
 		api.HandleGrpcErrorToHttp(err, ctx)
@@ -228,7 +226,6 @@ func UpdateCategoryBrand(ctx *gin.Context) {
 	}
 	ctx.Status(http.StatusOK)
 }
-
 
 func DeleteCategoryBrand(ctx *gin.Context) {
 	id := ctx.Param("id")

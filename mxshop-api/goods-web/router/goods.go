@@ -2,9 +2,9 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"mxshop-api/goods-web/middlewares"
+	"shop-api/goods-web/middlewares"
 
-	"mxshop-api/goods-web/api/goods"
+	"shop-api/goods-web/api/goods"
 )
 
 func InitGoodsRouter(Router *gin.RouterGroup) {

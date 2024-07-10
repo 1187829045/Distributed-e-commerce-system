@@ -15,11 +15,11 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/hashicorp/consul/api"
-	"sale_master/mxshop_srvs/user_srv/global"
-	"sale_master/mxshop_srvs/user_srv/handler"
-	"sale_master/mxshop_srvs/user_srv/initialize"
-	"sale_master/mxshop_srvs/user_srv/proto"
-	"sale_master/mxshop_srvs/user_srv/utils"
+	"shop_srvs/user_srv/global"
+	"shop_srvs/user_srv/handler"
+	"shop_srvs/user_srv/initialize"
+	"shop_srvs/user_srv/proto"
+	"shop_srvs/user_srv/utils"
 )
 
 func main() {
@@ -60,7 +60,7 @@ func main() {
 	}
 	//生成对应的检查对象
 	check := &api.AgentServiceCheck{
-		GRPC:                           fmt.Sprintf("192.168.128.135:%d", *Port),
+		GRPC:                           fmt.Sprintf("192.168.128.128:%d", *Port),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
@@ -72,8 +72,8 @@ func main() {
 	serviceID := fmt.Sprintf("%s", uuid.NewV4)
 	registration.ID = serviceID
 	registration.Port = *Port
-	registration.Tags = []string{"imooc", "bobby", "user", "srv"}
-	registration.Address = "192.168.128.135"
+	registration.Tags = []string{"llb", "bobby", "user", "srv"}
+	registration.Address = "192.168.128.128"
 	registration.Check = check
 	//1. 如何启动两个服务
 	//2. 即使我能够通过终端启动两个服务，但是注册到consul中的时候也会被覆盖

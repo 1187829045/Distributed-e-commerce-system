@@ -2,8 +2,8 @@ package global
 
 import (
 	ut "github.com/go-playground/universal-translator"
-	"mxshop-api/goods-web/config"
-	"mxshop-api/goods-web/proto"
+	"shop-api/goods-web/config"
+	"shop-api/goods-web/proto"
 )
 
 var (

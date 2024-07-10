@@ -1,4 +1,4 @@
-module mxshop_srvs
+module shop_srvs
 
 go 1.22.4
 

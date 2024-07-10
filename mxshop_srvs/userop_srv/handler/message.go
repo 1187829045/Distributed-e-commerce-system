@@ -3,17 +3,17 @@ package handler
 import (
 	"context"
 
-	"mxshop_srvs/userop_srv/global"
-	"mxshop_srvs/userop_srv/model"
-	"mxshop_srvs/userop_srv/proto"
+	"shop_srvs/userop_srv/global"
+	"shop_srvs/userop_srv/model"
+	"shop_srvs/userop_srv/proto"
 )
 
 func (*UserOpServer) MessageList(ctx context.Context, req *proto.MessageRequest) (*proto.MessageListResponse, error) {
 	var rsp proto.MessageListResponse
 	var messages []model.LeavingMessages
-	var messageList  []*proto.MessageResponse
+	var messageList []*proto.MessageResponse
 
-	result := global.DB.Where(&model.LeavingMessages{User:req.UserId}).Find(&messages)
+	result := global.DB.Where(&model.LeavingMessages{User: req.UserId}).Find(&messages)
 	rsp.Total = int32(result.RowsAffected)
 
 	for _, message := range messages {
@@ -31,7 +31,6 @@ func (*UserOpServer) MessageList(ctx context.Context, req *proto.MessageRequest)
 	return &rsp, nil
 }
 
-
 func (*UserOpServer) CreateMessage(ctx context.Context, req *proto.MessageRequest) (*proto.MessageResponse, error) {
 	var message model.LeavingMessages
 
@@ -43,5 +42,5 @@ func (*UserOpServer) CreateMessage(ctx context.Context, req *proto.MessageReques
 
 	global.DB.Save(&message)
 
-	return &proto.MessageResponse{Id:message.ID}, nil
+	return &proto.MessageResponse{Id: message.ID}, nil
 }

@@ -1,17 +1,17 @@
 package main
 
 import (
-	"crypto/md5"                  // 引入 md5 包，用于生成 MD5 哈希
-	"encoding/hex"                // 引入 hex 包，用于将 MD5 哈希编码为十六进制字符串
-	"gorm.io/driver/mysql"        // 引入 GORM 的 MySQL 驱动
-	"gorm.io/gorm"                // 引入 GORM 包
-	"gorm.io/gorm/logger"         // 引入 GORM 的 logger 包
-	"gorm.io/gorm/schema"         // 引入 GORM 的 schema 包，用于定义数据库模式
-	"io"                          // 引入 io 包，用于输入/输出操作
-	"log"                         // 引入 log 包，用于日志记录
-	"mxshop_srvs/order_srv/model" // 引入自定义的 model 包
-	"os"                          // 引入 os 包，用于操作系统功能
-	"time"                        // 引入 time 包，用于时间操作
+	"crypto/md5"                // 引入 md5 包，用于生成 MD5 哈希
+	"encoding/hex"              // 引入 hex 包，用于将 MD5 哈希编码为十六进制字符串
+	"gorm.io/driver/mysql"      // 引入 GORM 的 MySQL 驱动
+	"gorm.io/gorm"              // 引入 GORM 包
+	"gorm.io/gorm/logger"       // 引入 GORM 的 logger 包
+	"gorm.io/gorm/schema"       // 引入 GORM 的 schema 包，用于定义数据库模式
+	"io"                        // 引入 io 包，用于输入/输出操作
+	"log"                       // 引入 log 包，用于日志记录
+	"os"                        // 引入 os 包，用于操作系统功能
+	"shop_srvs/order_srv/model" // 引入自定义的 model 包
+	"time"                      // 引入 time 包，用于时间操作
 )
 
 // 生成 MD5 哈希值的函数
@@ -23,7 +23,7 @@ func genMd5(code string) string {
 
 func main() {
 	// 数据库连接字符串
-	dsn := "root:root@tcp(192.168.128.137:3306)/mxshop_order_srv?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(192.168.128.128:3306)/shop_order_srv?charset=utf8mb4&parseTime=True&loc=Local"
 
 	// 配置新的日志记录器
 	newLogger := logger.New(

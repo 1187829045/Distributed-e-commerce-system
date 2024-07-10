@@ -5,7 +5,7 @@ package config
 // UserSrvConfig 用于存储用户服务的配置信息
 type UserSrvConfig struct {
 	Host string `mapstructure:"host"` // 用户服务的主机地址
-	Port int    `mapstructure:"port"` // 用户服务的端口号
+	Port int    `mapstructure:"port"`
 	Name string `mapstructure:"name" json:"name"`
 }
 
@@ -35,10 +35,10 @@ type RedisConfig struct {
 
 // ServerConfig 用于存储服务器的配置信息
 type ServerConfig struct {
-	Name        string        `mapstructure:"name"`               // 服务器名称
-	Host        string        `mapstructure:"host" json:"host"`   // 服务器主机地址
-	Tags        []string      `mapstructure:"tags" json:"tags"`   // 服务器标签
-	Port        int           `mapstructure:"port" json:"port"`   // 服务器端口号
+	Name        string        `mapstructure:"name"` // 服务器名称
+	Host        string        `mapstructure:"host" json:"host"`
+	Tags        []string      `mapstructure:"tags" json:"tags"` // 服务器标签
+	Port        int           `mapstructure:"port" json:"port"`
 	UserSrvInfo UserSrvConfig `mapstructure:"user_srv"`           // 用户服务配置信息
 	JWTInfo     JWTConfig     `mapstructure:"jwt" json:"jwt"`     // JWT 配置信息
 	AliSmsInfo  AliSmsConfig  `mapstructure:"sms" json:"sms"`     // 阿里短信服务配置信息

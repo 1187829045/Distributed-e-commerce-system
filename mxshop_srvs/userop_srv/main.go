@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"mxshop_srvs/userop_srv/handler"
-	"mxshop_srvs/userop_srv/utils/register/consul"
 	"net"
 	"os"
 	"os/signal"
+	"shop_srvs/userop_srv/handler"
+	"shop_srvs/userop_srv/utils/register/consul"
 	"syscall"
 
 	"github.com/satori/go.uuid"
@@ -16,10 +16,10 @@ import (
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"mxshop_srvs/userop_srv/global"
-	"mxshop_srvs/userop_srv/initialize"
-	"mxshop_srvs/userop_srv/proto"
-	"mxshop_srvs/userop_srv/utils"
+	"shop_srvs/userop_srv/global"
+	"shop_srvs/userop_srv/initialize"
+	"shop_srvs/userop_srv/proto"
+	"shop_srvs/userop_srv/utils"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 
 	flag.Parse()
 	zap.S().Info("ip: ", *IP)
-	if *Port == 0{
+	if *Port == 0 {
 		*Port, _ = utils.GetFreePort()
 	}
 
@@ -74,7 +74,7 @@ func main() {
 	<-quit
 	if err = register_client.DeRegister(serviceId); err != nil {
 		zap.S().Info("注销失败:", err.Error())
-	}else{
+	} else {
 		zap.S().Info("注销成功:")
 	}
 }

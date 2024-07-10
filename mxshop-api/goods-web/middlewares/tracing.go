@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"fmt"
-	"mxshop-api/goods-web/global"
+	"shop-api/goods-web/global"
 
 	"github.com/gin-gonic/gin"              // 引入 Gin 框架
 	"github.com/opentracing/opentracing-go" // 引入 OpenTracing 包

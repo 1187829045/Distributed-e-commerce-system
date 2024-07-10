@@ -14,10 +14,10 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"gorm.io/gorm"
-	"mxshop_srvs/inventory_srv/model"
+	"shop_srvs/inventory_srv/model"
 
-	"mxshop_srvs/inventory_srv/global"
-	"mxshop_srvs/inventory_srv/proto"
+	"shop_srvs/inventory_srv/global"
+	"shop_srvs/inventory_srv/proto"
 )
 
 type InventoryServer struct {
@@ -51,7 +51,7 @@ func (*InventoryServer) Sell(ctx context.Context, req *proto.SellInfo) (*emptypb
 	//数据库基本的一个应用场景：数据库事务
 	//并发情况之下 可能会出现超卖 1
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr: "192.168.128.136:6379",
+		Addr: "192.168.128.128:6379",
 	})
 	pool := goredis.NewPool(client) // or, pool := redigo.NewPool(...)
 	rs := redsync.New(pool)
@@ -117,8 +117,7 @@ func (*InventoryServer) Sell(ctx context.Context, req *proto.SellInfo) (*emptypb
 		tx.Rollback()
 		return nil, status.Errorf(codes.Internal, "保存库存扣减历史失败")
 	}
-	tx.Commit() // 需要自己手动提交操作
-	//m.Unlock() //释放锁
+	tx.Commit()
 	return &emptypb.Empty{}, nil
 }
 
@@ -146,7 +145,7 @@ func (*InventoryServer) TrySell(ctx context.Context, req *proto.SellInfo) (*empt
 	//数据库基本的一个应用场景：数据库事务
 	//并发情况之下 可能会出现超卖 1
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr: "192.168.0.104:6379",
+		Addr: "192.168.128.128:6379",
 	})
 	pool := goredis.NewPool(client) // or, pool := redigo.NewPool(...)
 	rs := redsync.New(pool)
@@ -205,7 +204,7 @@ func (*InventoryServer) ConfirmSell(ctx context.Context, req *proto.SellInfo) (*
 	//并发情况之下 可能会出现超卖 1
 
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr: "192.168.0.104:6379",
+		Addr: "192.168.128.128:6379",
 	})
 	pool := goredis.NewPool(client) // or, pool := redigo.NewPool(...)
 	rs := redsync.New(pool)
@@ -263,7 +262,7 @@ func (*InventoryServer) CancelSell(ctx context.Context, req *proto.SellInfo) (*e
 	//数据库基本的一个应用场景：数据库事务
 	//并发情况之下 可能会出现超卖 1
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr: "192.168.0.104:6379",
+		Addr: "192.168.128.128:6379",
 	})
 	pool := goredis.NewPool(client) // or, pool := redigo.NewPool(...)
 	rs := redsync.New(pool)

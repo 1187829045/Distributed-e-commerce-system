@@ -4,13 +4,12 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"mxshop-api/userop-web/api"
-	"mxshop-api/userop-web/forms"
-	"mxshop-api/userop-web/global"
-	"mxshop-api/userop-web/proto"
 	"net/http"
-	"mxshop-api/userop-web/models"
-
+	"shop-api/userop-web/api"
+	"shop-api/userop-web/forms"
+	"shop-api/userop-web/global"
+	"shop-api/userop-web/models"
+	"shop-api/userop-web/proto"
 )
 
 func List(ctx *gin.Context) {
@@ -60,11 +59,11 @@ func New(ctx *gin.Context) {
 	}
 
 	rsp, err := global.MessageClient.CreateMessage(context.Background(), &proto.MessageRequest{
-		UserId: int32(userId.(uint)),
+		UserId:      int32(userId.(uint)),
 		MessageType: messageForm.MessageType,
-		Subject: messageForm.Subject,
-		Message: messageForm.Message,
-		File: messageForm.File,
+		Subject:     messageForm.Subject,
+		Message:     messageForm.Message,
+		File:        messageForm.File,
 	})
 
 	if err != nil {
@@ -73,6 +72,6 @@ func New(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"id":rsp.Id,
+		"id": rsp.Id,
 	})
 }

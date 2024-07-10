@@ -17,9 +17,9 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"mxshop_srvs/order_srv/global"
-	"mxshop_srvs/order_srv/model"
-	"mxshop_srvs/order_srv/proto"
+	"shop_srvs/order_srv/global"
+	"shop_srvs/order_srv/model"
+	"shop_srvs/order_srv/proto"
 )
 
 type OrderServer struct {
@@ -296,7 +296,7 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 	deleteShopCartSpan.Finish()
 
 	//发送延时消息
-	p, err := rocketmq.NewProducer(producer.WithNameServer([]string{"192.168.0.104:9876"}))
+	p, err := rocketmq.NewProducer(producer.WithNameServer([]string{"192.168.128.128:9876"}))
 	if err != nil {
 		panic("生成producer失败")
 	}
@@ -352,7 +352,7 @@ func (*OrderServer) CreateOrder(ctx context.Context, req *proto.OrderRequest) (*
 	orderListener := OrderListener{Ctx: ctx}
 	p, err := rocketmq.NewTransactionProducer(
 		&orderListener,
-		producer.WithNameServer([]string{"192.168.128.138:9876"}),
+		producer.WithNameServer([]string{"192.168.128.128:9876"}),
 	)
 	if err != nil {
 		zap.S().Errorf("生成producer失败: %s", err.Error())
@@ -414,7 +414,7 @@ func OrderTimeout(ctx context.Context, msgs ...*primitive.MessageExt) (consumer.
 			order.Status = "TRADE_CLOSED"
 			tx.Save(&order)
 
-			p, err := rocketmq.NewProducer(producer.WithNameServer([]string{"192.168.0.104:9876"}))
+			p, err := rocketmq.NewProducer(producer.WithNameServer([]string{"192.168.128.128:9876"}))
 			if err != nil {
 				panic("生成producer失败")
 			}

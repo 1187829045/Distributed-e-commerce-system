@@ -28,9 +28,9 @@ func main() {
 		},
 		Reporter: &jaegercfg.ReporterConfig{
 			LogSpans:           true,
-			LocalAgentHostPort: "192.168.0.104:6831",
+			LocalAgentHostPort: "192.168.128.128:6831",
 		},
-		ServiceName: "mxshop",
+		ServiceName: "shop",
 	}
 
 	_, closer, err := cfg.NewTracer(jaegercfg.Logger(jaeger.StdLogger))

@@ -3,16 +3,15 @@ package main
 import (
 	"context"
 	"google.golang.org/grpc"
-	"mxshop_srvs/userop_srv/proto"
+	"shop_srvs/userop_srv/proto"
 )
-
 
 var userFavClient proto.UserFavClient
 var messageClient proto.MessageClient
 var addressClient proto.AddressClient
 var conn *grpc.ClientConn
 
-func TestAddressList(){
+func TestAddressList() {
 	_, err := addressClient.GetAddressList(context.Background(), &proto.AddressRequest{
 		UserId: 1,
 	})
@@ -39,8 +38,7 @@ func TestUserFav() {
 	}
 }
 
-
-func Init(){
+func Init() {
 	var err error
 	conn, err = grpc.Dial("127.0.0.1:50051", grpc.WithInsecure())
 	if err != nil {
@@ -50,8 +48,6 @@ func Init(){
 	messageClient = proto.NewMessageClient(conn)
 	addressClient = proto.NewAddressClient(conn)
 }
-
-
 
 func main() {
 	Init()

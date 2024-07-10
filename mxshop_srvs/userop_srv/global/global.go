@@ -2,17 +2,17 @@ package global
 
 import (
 	"gorm.io/gorm"
-	"mxshop_srvs/userop_srv/config"
+	"shop_srvs/userop_srv/config"
 )
 
 var (
-	DB *gorm.DB
+	DB           *gorm.DB
 	ServerConfig config.ServerConfig
-	NacosConfig config.NacosConfig
+	NacosConfig  config.NacosConfig
 )
 
 //func init() {
-//	dsn := "root:root@tcp(192.168.0.104:3306)/mxshop_userop_srv?charset=utf8mb4&parseTime=True&loc=Local"
+//	dsn := "root:root@tcp(192.168.128.128:3306)/shop_userop_srv?charset=utf8mb4&parseTime=True&loc=Local"
 //
 //	newLogger := logger.New(
 //		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer

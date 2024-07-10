@@ -5,14 +5,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/smartwalle/alipay/v3"
 	"go.uber.org/zap"
-	"mxshop-api/order-web/forms"
-	"mxshop-api/order-web/global"
-	"mxshop-api/order-web/proto"
 	"net/http"
+	"shop-api/order-web/forms"
+	"shop-api/order-web/global"
+	"shop-api/order-web/proto"
 	"strconv"
 
-	"mxshop-api/order-web/api"
-	"mxshop-api/order-web/models"
+	"shop-api/order-web/api"
+	"shop-api/order-web/models"
 )
 
 //获取订单列表

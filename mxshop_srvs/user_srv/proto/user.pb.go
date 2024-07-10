@@ -340,10 +340,10 @@ type UpdateUserInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`             // 用户 ID
-	NickName string `protobuf:"bytes,2,opt,name=nickName,proto3" json:"nickName,omitempty"`  // 用户昵称
-	Gender   string `protobuf:"bytes,3,opt,name=gender,proto3" json:"gender,omitempty"`      // 用户性别
-	BirthDay uint64 `protobuf:"varint,4,opt,name=birthDay,proto3" json:"birthDay,omitempty"` // 用户生日，使用时间戳表示
+	Id       int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	NickName string `protobuf:"bytes,2,opt,name=nickName,proto3" json:"nickName,omitempty"`
+	Gender   string `protobuf:"bytes,3,opt,name=gender,proto3" json:"gender,omitempty"`
+	BirthDay uint64 `protobuf:"varint,4,opt,name=birthDay,proto3" json:"birthDay,omitempty"`
 }
 
 func (x *UpdateUserInfo) Reset() {
@@ -411,13 +411,13 @@ type UserInfoResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`             // 用户 ID
-	PassWord string `protobuf:"bytes,2,opt,name=passWord,proto3" json:"passWord,omitempty"`  // 用户密码
-	Mobile   string `protobuf:"bytes,3,opt,name=mobile,proto3" json:"mobile,omitempty"`      // 用户手机号
-	NickName string `protobuf:"bytes,4,opt,name=nickName,proto3" json:"nickName,omitempty"`  // 用户昵称
-	BirthDay uint64 `protobuf:"varint,5,opt,name=birthDay,proto3" json:"birthDay,omitempty"` // 用户生日，使用时间戳表示
-	Gender   string `protobuf:"bytes,6,opt,name=gender,proto3" json:"gender,omitempty"`      // 用户性别
-	Role     int32  `protobuf:"varint,7,opt,name=role,proto3" json:"role,omitempty"`         // 用户角色
+	Id       int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	PassWord string `protobuf:"bytes,2,opt,name=passWord,proto3" json:"passWord,omitempty"`
+	Mobile   string `protobuf:"bytes,3,opt,name=mobile,proto3" json:"mobile,omitempty"`
+	NickName string `protobuf:"bytes,4,opt,name=nickName,proto3" json:"nickName,omitempty"`
+	BirthDay uint64 `protobuf:"varint,5,opt,name=birthDay,proto3" json:"birthDay,omitempty"`
+	Gender   string `protobuf:"bytes,6,opt,name=gender,proto3" json:"gender,omitempty"`
+	Role     int32  `protobuf:"varint,7,opt,name=role,proto3" json:"role,omitempty"`
 }
 
 func (x *UserInfoResponse) Reset() {

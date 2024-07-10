@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"sale_master/mxshop_srvs/user_srv/global"
+	"shop_srvs/user_srv/global"
 )
 
 func GetEnvInfo(env string) bool {
@@ -21,11 +21,11 @@ func GetEnvInfo(env string) bool {
 
 func InitConfig() {
 	//从配置文件中读取出对应的配置
-	debug := GetEnvInfo("MXSHOP_DEBUG")
+	debug := GetEnvInfo("SHOP_DEBUG")
 	configFilePrefix := "config"
-	configFileName := fmt.Sprintf("sale_master/mxshop_srvs/user_srv/%s-pro.yaml", configFilePrefix)
+	configFileName := fmt.Sprintf("sale_master/shop_srvs/user_srv/%s-pro.yaml", configFilePrefix)
 	if debug {
-		configFileName = fmt.Sprintf("sale_master/mxshop_srvs/user_srv/%s-debug.yaml", configFilePrefix)
+		configFileName = fmt.Sprintf("sale_master/shop_srvs/user_srv/%s-debug.yaml", configFilePrefix)
 	}
 
 	v := viper.New()

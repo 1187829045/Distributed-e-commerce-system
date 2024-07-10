@@ -10,13 +10,13 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"mxshop-api/user-web/forms"
-	"mxshop-api/user-web/global"
-	"mxshop-api/user-web/global/reponse"
-	"mxshop-api/user-web/middlewares"
-	"mxshop-api/user-web/models"
-	"mxshop-api/user-web/proto"
 	"net/http"
+	"shop-api/user-web/forms"
+	"shop-api/user-web/global"
+	"shop-api/user-web/global/reponse"
+	"shop-api/user-web/middlewares"
+	"shop-api/user-web/models"
+	"shop-api/user-web/proto"
 	"strconv"
 	"strings"
 	"time"
@@ -32,8 +32,6 @@ func removeTopStruct(fileds map[string]string) map[string]string {
 }
 
 // HandleGrpcErrorToHttp 将 gRPC 错误转换为 HTTP 响应
-// err: gRPC 调用返回的错误
-// c: gin 的上下文，用于生成 HTTP 响应
 func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	if err != nil {
 		// 将错误转换为 gRPC 状态
@@ -148,6 +146,8 @@ func PassWordLogin(c *gin.Context) {
 		HandleValidatorError(c, err)
 		return
 	}
+	//调用了 store 对象的 Verify 方法来验证用户输入的验证码是否正确。
+	//true 参数通常表示在验证后是否删除该验证码
 	if !store.Verify(passwordLoginForm.CaptchaId, passwordLoginForm.Captcha, true) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"captcha": "验证码错误",
@@ -288,51 +288,3 @@ func Register(c *gin.Context) {
 		"expired_at": (time.Now().Unix() + 60*60*24*30) * 1000,
 	})
 }
-
-//func GetUserDetail(ctx *gin.Context){
-//	claims, _ := ctx.Get("claims")
-//	currentUser := claims.(*models.CustomClaims)
-//	zap.S().Infof("访问用户: %d", currentUser.ID)
-//
-//	rsp, err := global.UserSrvClient.GetUserById(context.Background(), &proto.IdRequest{
-//		Id: int32(currentUser.ID),
-//	})
-//	if err != nil {
-//		HandleGrpcErrorToHttp(err, ctx)
-//		return
-//	}
-//	ctx.JSON(http.StatusOK, gin.H{
-//		"name":rsp.NickName,
-//		"birthday": time.Unix(int64(rsp.BirthDay), 0).Format("2006-01-02"),
-//		"gender":rsp.Gender,
-//		"mobile":rsp.Mobile,
-//	})
-//}
-//
-//
-//func UpdateUser(ctx *gin.Context){
-//	updateUserForm := forms.UpdateUserForm{}
-//	if err := ctx.ShouldBind(&updateUserForm); err != nil {
-//		HandleValidatorError(ctx, err)
-//		return
-//	}
-//
-//	claims, _ := ctx.Get("claims")
-//	currentUser := claims.(*models.CustomClaims)
-//	zap.S().Infof("访问用户: %d", currentUser.ID)
-//
-//	//将前端传递过来的日期格式转换成int
-//	loc, _ := time.LoadLocation("Local") //local的L必须大写
-//	birthDay, _ := time.ParseInLocation("2006-01-02", updateUserForm.Birthday, loc)
-//	_, err := global.UserSrvClient.UpdateUser(context.Background(), &proto.UpdateUserInfo{
-//		Id:       int32(currentUser.ID),
-//		NickName: updateUserForm.Name,
-//		Gender:   updateUserForm.Gender,
-//		BirthDay: uint64(birthDay.Unix()),
-//	})
-//	if err != nil {
-//		HandleGrpcErrorToHttp(err, ctx)
-//		return
-//	}
-//	ctx.JSON(http.StatusOK, gin.H{})
-//}

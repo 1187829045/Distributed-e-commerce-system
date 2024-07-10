@@ -42,7 +42,7 @@ type Account struct {
 
 func main() {
 	logger := log.New(os.Stdout, "Info: ", log.LstdFlags)
-	client, err := elastic.NewClient(elastic.SetURL("http://192.168.128.140:9200"), elastic.SetSniff(false),
+	client, err := elastic.NewClient(elastic.SetURL("http://192.168.128.128:9200"), elastic.SetSniff(false),
 		elastic.SetTraceLog(logger))
 	if err != nil {
 		panic(err)

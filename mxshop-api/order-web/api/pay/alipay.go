@@ -5,11 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/smartwalle/alipay/v3"
 	"go.uber.org/zap"
-	"mxshop-api/order-web/proto"
 	"net/http"
+	"shop-api/order-web/proto"
 
-	"mxshop-api/order-web/global"
+	"shop-api/order-web/global"
 )
+
+//用于支付宝的回调通知
 
 func Notify(ctx *gin.Context) {
 	//支付宝回调通知
@@ -17,7 +19,7 @@ func Notify(ctx *gin.Context) {
 	if err != nil {
 		zap.S().Errorw("实例化支付宝失败")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg":err.Error(),
+			"msg": err.Error(),
 		})
 		return
 	}
@@ -25,7 +27,7 @@ func Notify(ctx *gin.Context) {
 	if err != nil {
 		zap.S().Errorw("加载支付宝的公钥失败")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg":err.Error(),
+			"msg": err.Error(),
 		})
 		return
 	}

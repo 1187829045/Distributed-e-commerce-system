@@ -33,7 +33,7 @@ func main() {
 			LocalAgentHostPort: "192.168.128.128:6831", // Jaeger Agent 的地址
 		},
 		// 服务名称
-		ServiceName: "mxshop",
+		ServiceName: "shop",
 	}
 
 	// 创建 Jaeger Tracer 实例

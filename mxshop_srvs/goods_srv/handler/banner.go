@@ -7,9 +7,9 @@ import (
 
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"mxshop_srvs/goods_srv/global"
-	"mxshop_srvs/goods_srv/model"
-	"mxshop_srvs/goods_srv/proto"
+	"shop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/model"
+	"shop_srvs/goods_srv/proto"
 )
 
 // 轮播图

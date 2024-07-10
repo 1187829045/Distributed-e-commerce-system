@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"mxshop-api/goods-web/global"
+	"shop-api/goods-web/global"
 )
 
 func GetEnvInfo(env string) bool {
@@ -20,7 +20,7 @@ func GetEnvInfo(env string) bool {
 }
 
 func InitConfig() {
-	debug := GetEnvInfo("MXSHOP_DEBUG")
+	debug := GetEnvInfo("shop_DEBUG")
 	configFilePrefix := "config"
 	configFileName := fmt.Sprintf("%s-pro.yaml", configFilePrefix)
 	if debug {

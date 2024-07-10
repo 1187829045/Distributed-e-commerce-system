@@ -208,7 +208,7 @@ func initRedisClients() []*goredislib.Client {
 // 这里应该创建多个 Redis 客户端，连接到不同的 Redis 实例
 client1 := goredislib.NewClient(&goredislib.Options{Addr: "192.168.0.101:6379"})
 client2 := goredislib.NewClient(&goredislib.Options{Addr: "192.168.0.102:6379"})
-client3 := goredislib.NewClient(&goredislib.Options{Addr: "192.168.0.103:6379"})
+client3 := goredislib.NewClient(&goredislib.Options{Addr: "192.168.128.128:6379"})
 
 	return []*goredislib.Client{client1, client2, client3}
 }

@@ -7,8 +7,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"mxshop_srvs/order_srv/global"
-	"mxshop_srvs/order_srv/proto"
+	"shop_srvs/order_srv/global"
+	"shop_srvs/order_srv/proto"
 )
 
 func InitSrvConn() {

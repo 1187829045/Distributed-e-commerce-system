@@ -14,7 +14,7 @@ import (
 func main() {
 	// 连接到 Consul 注册中心的 gRPC 服务
 	conn, err := grpc.Dial(
-		"consul://192.168.128.135:8500/user-srv?wait=14s&tag=srv", // Consul 地址及服务标签
+		"consul://192.168.128.128:8500/user-srv?wait=14s&tag=srv", // Consul 地址及服务标签
 		grpc.WithInsecure(), // 使用不安全连接，仅用于示例目的，生产环境应使用安全连接或证书
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`), // 设置默认的负载均衡策略为轮询
 	)

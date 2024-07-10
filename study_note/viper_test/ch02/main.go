@@ -26,7 +26,7 @@ func GetEnvInfo(env string) bool {
 }
 
 func main() {
-	debug := GetEnvInfo("MXSHOP_DEBUG")                                            // 获取环境变量 MXSHOP_DEBUG 的布尔值
+	debug := GetEnvInfo("SHOP_DEBUG")                                              // 获取环境变量 shop_DEBUG 的布尔值
 	configFilePrefix := "config"                                                   // 配置文件前缀名
 	configFileName := fmt.Sprintf("viper_test/ch02/%s-pro.yaml", configFilePrefix) // 生产环境配置文件路径
 

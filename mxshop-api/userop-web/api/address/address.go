@@ -4,12 +4,12 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"mxshop-api/userop-web/api"
-	"mxshop-api/userop-web/forms"
-	"mxshop-api/userop-web/global"
-	"mxshop-api/userop-web/models"
-	"mxshop-api/userop-web/proto"
 	"net/http"
+	"shop-api/userop-web/api"
+	"shop-api/userop-web/forms"
+	"shop-api/userop-web/global"
+	"shop-api/userop-web/models"
+	"shop-api/userop-web/proto"
 	"strconv"
 )
 
@@ -64,12 +64,12 @@ func New(ctx *gin.Context) {
 
 	userId, _ := ctx.Get("userId")
 	rsp, err := global.AddressClient.CreateAddress(context.Background(), &proto.AddressRequest{
-		UserId: int32(userId.(uint)),
-		Province: addressForm.Province,
-		City: addressForm.City,
-		District: addressForm.District,
-		Address: addressForm.Address,
-		SignerName: addressForm.SignerName,
+		UserId:       int32(userId.(uint)),
+		Province:     addressForm.Province,
+		City:         addressForm.City,
+		District:     addressForm.District,
+		Address:      addressForm.Address,
+		SignerName:   addressForm.SignerName,
 		SignerMobile: addressForm.SignerMobile,
 	})
 
@@ -80,7 +80,7 @@ func New(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"id":rsp.Id,
+		"id": rsp.Id,
 	})
 }
 
@@ -99,7 +99,7 @@ func Delete(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg":"删除成功",
+		"msg": "删除成功",
 	})
 }
 
@@ -118,12 +118,12 @@ func Update(ctx *gin.Context) {
 	}
 
 	_, err = global.AddressClient.UpdateAddress(context.Background(), &proto.AddressRequest{
-		Id:   int32(i),
-		Province: addressForm.Province,
-		City: addressForm.City,
-		District: addressForm.District,
-		Address: addressForm.Address,
-		SignerName: addressForm.SignerName,
+		Id:           int32(i),
+		Province:     addressForm.Province,
+		City:         addressForm.City,
+		District:     addressForm.District,
+		Address:      addressForm.Address,
+		SignerName:   addressForm.SignerName,
 		SignerMobile: addressForm.SignerMobile,
 	})
 	if err != nil {

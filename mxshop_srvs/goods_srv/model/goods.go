@@ -6,12 +6,11 @@ import (
 
 	"gorm.io/gorm"
 
-	"mxshop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/global"
 )
 
 // 类型， 这个字段是否能为null， 这个字段应该设置为可以为null还是设置为空， 0
 // 实际开发过程中 尽量设置为不为null
-// https://zhuanlan.zhihu.com/p/73997266
 // 这些类型我们使用int32还是int
 
 type Category struct {
@@ -19,9 +18,9 @@ type Category struct {
 	Name             string      `gorm:"type:varchar(20);not null" json:"name"`
 	ParentCategoryID int32       `json:"parent"`
 	ParentCategory   *Category   `json:"-"`
-	SubCategory      []*Category `gorm:"foreignKey:ParentCategoryID;references:ID" json:"sub_category"`
-	Level            int32       `gorm:"type:int;not null;default:1" json:"level"`
-	IsTab            bool        `gorm:"default:false;not null" json:"is_tab"`
+	SubCategory      []*Category `gorm:"foreignKey:ParentCategoryID;references:ID" json:"sub_category"` //子目录
+	Level            int32       `gorm:"type:int;not null;default:1" json:"level"`                      //几级类目
+	IsTab            bool        `gorm:"default:false;not null" json:"is_tab"`                          //是否展现在Tab栏
 }
 
 type Brands struct {
@@ -42,7 +41,7 @@ type GoodsCategoryBrand struct {
 }
 
 func (GoodsCategoryBrand) TableName() string {
-	return "goodscategorybrand"
+	return "goods_category_brand"
 }
 
 //轮播图
@@ -68,16 +67,16 @@ type Goods struct {
 	IsHot    bool `gorm:"default:false;not null"`
 
 	Name            string   `gorm:"type:varchar(50);not null"`
-	GoodsSn         string   `gorm:"type:varchar(50);not null"`
+	GoodsSn         string   `gorm:"type:varchar(50);not null"` //订单编号
 	ClickNum        int32    `gorm:"type:int;default:0;not null"`
 	SoldNum         int32    `gorm:"type:int;default:0;not null"`
 	FavNum          int32    `gorm:"type:int;default:0;not null"`
 	MarketPrice     float32  `gorm:"not null"`
 	ShopPrice       float32  `gorm:"not null"`
-	GoodsBrief      string   `gorm:"type:varchar(100);not null"`
+	GoodsBrief      string   `gorm:"type:varchar(100);not null"` //商品简介
 	Images          GormList `gorm:"type:varchar(1000);not null"`
 	DescImages      GormList `gorm:"type:varchar(1000);not null"`
-	GoodsFrontImage string   `gorm:"type:varchar(200);not null"`
+	GoodsFrontImage string   `gorm:"type:varchar(200);not null"` //封面图
 }
 
 // 同步商品到ES中，降低耦合性

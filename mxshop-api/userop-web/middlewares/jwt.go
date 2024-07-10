@@ -4,9 +4,9 @@ import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"mxshop-api/userop-web/global"
-	"mxshop-api/userop-web/models"
 	"net/http"
+	"shop-api/userop-web/global"
+	"shop-api/userop-web/models"
 	"time"
 )
 
@@ -16,7 +16,7 @@ func JWTAuth() gin.HandlerFunc {
 		token := c.Request.Header.Get("x-token")
 		if token == "" {
 			c.JSON(http.StatusUnauthorized, map[string]string{
-				"msg":"请登录",
+				"msg": "请登录",
 			})
 			c.Abort()
 			return
@@ -28,7 +28,7 @@ func JWTAuth() gin.HandlerFunc {
 			if err == TokenExpired {
 				if err == TokenExpired {
 					c.JSON(http.StatusUnauthorized, map[string]string{
-						"msg":"授权已过期",
+						"msg": "授权已过期",
 					})
 					c.Abort()
 					return

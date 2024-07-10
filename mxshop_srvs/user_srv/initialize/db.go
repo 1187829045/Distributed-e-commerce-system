@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sale_master/mxshop_srvs/user_srv/global"
+	"shop_srvs/user_srv/global"
 	"time"
 
 	"gorm.io/driver/mysql"

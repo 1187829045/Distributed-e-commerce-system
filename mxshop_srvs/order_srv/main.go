@@ -10,22 +10,22 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"mxshop_srvs/order_srv/handler"
-	"mxshop_srvs/order_srv/utils/otgrpc"
-	"mxshop_srvs/order_srv/utils/register/consul"
 	"net"
 	"os"
 	"os/signal"
+	"shop_srvs/order_srv/handler"
+	"shop_srvs/order_srv/utils/otgrpc"
+	"shop_srvs/order_srv/utils/register/consul"
 	"syscall"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 
-	"mxshop_srvs/order_srv/global"
-	"mxshop_srvs/order_srv/initialize"
-	"mxshop_srvs/order_srv/proto"
-	"mxshop_srvs/order_srv/utils"
+	"shop_srvs/order_srv/global"
+	"shop_srvs/order_srv/initialize"
+	"shop_srvs/order_srv/proto"
+	"shop_srvs/order_srv/utils"
 )
 
 func main() {
@@ -57,7 +57,7 @@ func main() {
 			LogSpans:           true,
 			LocalAgentHostPort: "192.168.128.128:6831",
 		},
-		ServiceName: "mxshop",
+		ServiceName: "shop",
 	}
 
 	tracer, closer, err := cfg.NewTracer(jaegercfg.Logger(jaeger.StdLogger))

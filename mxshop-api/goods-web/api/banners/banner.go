@@ -8,12 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/ptypes/empty"
 
-	"mxshop-api/goods-web/api"
-	"mxshop-api/goods-web/forms"
-	"mxshop-api/goods-web/global"
-	"mxshop-api/goods-web/proto"
+	"shop-api/goods-web/api"
+	"shop-api/goods-web/forms"
+	"shop-api/goods-web/global"
+	"shop-api/goods-web/proto"
 )
-
 
 func List(ctx *gin.Context) {
 	rsp, err := global.GoodsSrvClient.BannerList(context.Background(), &empty.Empty{})
@@ -44,8 +43,8 @@ func New(ctx *gin.Context) {
 	}
 
 	rsp, err := global.GoodsSrvClient.CreateBanner(context.Background(), &proto.BannerRequest{
-		Index:      int32(bannerForm.Index),
-		Url: bannerForm.Url,
+		Index: int32(bannerForm.Index),
+		Url:   bannerForm.Url,
 		Image: bannerForm.Image,
 	})
 	if err != nil {
@@ -77,9 +76,9 @@ func Update(ctx *gin.Context) {
 	}
 
 	_, err = global.GoodsSrvClient.UpdateBanner(context.Background(), &proto.BannerRequest{
-		Id:         int32(i),
-		Index:      int32(bannerForm.Index),
-		Url:       bannerForm.Url,
+		Id:    int32(i),
+		Index: int32(bannerForm.Index),
+		Url:   bannerForm.Url,
 	})
 	if err != nil {
 		api.HandleGrpcErrorToHttp(err, ctx)
@@ -88,7 +87,6 @@ func Update(ctx *gin.Context) {
 
 	ctx.Status(http.StatusOK)
 }
-
 
 func Delete(ctx *gin.Context) {
 	id := ctx.Param("id")

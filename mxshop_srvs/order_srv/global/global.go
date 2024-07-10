@@ -2,8 +2,8 @@ package global
 
 import (
 	"gorm.io/gorm"
-	"mxshop_srvs/order_srv/config"
-	"mxshop_srvs/order_srv/proto"
+	"shop_srvs/order_srv/config"
+	"shop_srvs/order_srv/proto"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 )
 
 //func init() {
-//	dsn := "root:root@tcp(192.168.0.104:3306)/mxshop_order_srv?charset=utf8mb4&parseTime=True&loc=Local"
+//	dsn := "root:root@tcp(192.168.128.128:3306)/shop_order_srv?charset=utf8mb4&parseTime=True&loc=Local"
 //
 //	newLogger := logger.New(
 //		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer

@@ -12,7 +12,7 @@ import (
 func main() {
 	c, _ := rocketmq.NewPushConsumer(
 		consumer.WithNameServer([]string{"192.168.128.128:9876"}),
-		consumer.WithGroupName("mxshop"),
+		consumer.WithGroupName("shop"),
 	)
 
 	if err := c.Subscribe("imooc1", consumer.MessageSelector{}, func(ctx context.Context, msgs ...*primitive.MessageExt) (consumer.ConsumeResult, error) {

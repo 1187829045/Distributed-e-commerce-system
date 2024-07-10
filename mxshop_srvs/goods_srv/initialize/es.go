@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/olivere/elastic/v7"
 	"log"
-	"mxshop_srvs/goods_srv/global"
-	"mxshop_srvs/goods_srv/model"
 	"os"
+	"shop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/model"
 )
 
 func InitEs() {

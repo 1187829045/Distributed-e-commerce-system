@@ -9,8 +9,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
-	"mxshop-api/user-web/global"
 	"reflect"
+	"shop-api/user-web/global"
 	"strings"
 )
 

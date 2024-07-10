@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"mxshop_srvs/goods_srv/model"
+	"shop_srvs/goods_srv/model"
 
 	"google.golang.org/protobuf/types/known/emptypb"
-	"mxshop_srvs/goods_srv/global"
-	"mxshop_srvs/goods_srv/proto"
+	"shop_srvs/goods_srv/global"
+	"shop_srvs/goods_srv/proto"
 )
 
 // 商品分类
