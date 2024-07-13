@@ -1,7 +1,7 @@
 {
     "name":"goods-srv",
     "host":"192.168.128.128",
-    "tags":["imooc", "bobby", "python", "srv"],
+    "tags":["llb", "bobby", "python", "srv"],
     "mysql":{
         "db":"shop_goods_srv",
         "host":"192.168.128.128",

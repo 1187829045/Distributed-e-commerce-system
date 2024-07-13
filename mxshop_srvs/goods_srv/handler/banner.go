@@ -13,6 +13,7 @@ import (
 )
 
 // 轮播图
+
 func (s *GoodsServer) BannerList(ctx context.Context, req *emptypb.Empty) (*proto.BannerListResponse, error) {
 	bannerListResponse := proto.BannerListResponse{}
 

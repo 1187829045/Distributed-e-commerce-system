@@ -5,12 +5,6 @@ import (
 	"encoding/json"
 )
 
-//type Stock struct {
-//	BaseModel
-//	Name string
-//	Address string
-//}
-
 type GoodsDetail struct {
 	Goods int32
 	Num   int32
@@ -44,6 +38,8 @@ type InventoryNew struct {
 	Freeze  int32 `gorm:"type:int"` //冻结库存
 }
 
+//派送表
+
 type Delivery struct {
 	Goods   int32  `gorm:"type:int;index"`
 	Nums    int32  `gorm:"type:int"`
@@ -51,6 +47,7 @@ type Delivery struct {
 	Status  string `gorm:"type:varchar(200)"` //1. 表示等待支付 2. 表示支付成功 3. 失败，TCP事务
 }
 
+// 商品库存销售相关的详细信息
 type StockSellDetail struct {
 	OrderSn string          `gorm:"type:varchar(200);index:idx_order_sn,unique;"`
 	Status  int32           `gorm:"type:varchar(200)"` //1 表示已扣减 2. 表示已归还
@@ -60,11 +57,3 @@ type StockSellDetail struct {
 func (StockSellDetail) TableName() string {
 	return "stockselldetail"
 }
-
-//type InventoryHistory struct {
-//	user int32
-//	goods int32
-//	nums int32
-//	order int32
-//	status int32 //1. 表示库存是预扣减， 幂等性， 2. 表示已经支付
-//}

@@ -27,6 +27,7 @@ type OrderServer struct {
 }
 
 // 生成订单SN号
+
 func GenerateOrderSn(userId int32) string {
 	//订单号的生成规则
 	/*
@@ -42,6 +43,7 @@ func GenerateOrderSn(userId int32) string {
 }
 
 // 获取用户的购物车列表信息
+
 func (*OrderServer) CartItemList(ctx context.Context, req *proto.UserInfo) (*proto.CartItemListResponse, error) {
 	var shopCarts []model.ShoppingCart
 	var rsp proto.CartItemListResponse
@@ -65,6 +67,7 @@ func (*OrderServer) CartItemList(ctx context.Context, req *proto.UserInfo) (*pro
 }
 
 // 添加商品到购物车
+
 func (*OrderServer) CreateCartItem(ctx context.Context, req *proto.CartItemRequest) (*proto.ShopCartInfoResponse, error) {
 	//将商品添加到购物车 1. 购物车中原本没有这件商品 - 新建一个记录 2. 这个商品之前添加到了购物车- 合并
 	var shopCart model.ShoppingCart
@@ -144,7 +147,7 @@ func (*OrderServer) OrderDetail(ctx context.Context, req *proto.OrderRequest) (*
 	var order model.OrderInfo
 	var rsp proto.OrderInfoDetailResponse
 
-	//这个订单的id是否是当前用户的订单， 如果在web层用户传递过来一个id的订单， web层应该先查询一下订单id是否是当前用户的
+	//这个订单的id是否是当前用户的订单，如果在web层用户传递过来一个id的订单，web层应该先查询一下订单id是否是当前用户的
 	//在个人中心可以这样做，但是如果是后台管理系统，web层如果是后台管理系统 那么只传递order的id，如果是电商系统还需要一个用户的id
 	if result := global.DB.Where(&model.OrderInfo{BaseModel: model.BaseModel{ID: req.Id}, User: req.UserId}).First(&order); result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "订单不存在")
@@ -191,36 +194,45 @@ type OrderListener struct {
 }
 
 func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitive.LocalTransactionState {
+	// 反序列化消息体为 OrderInfo 对象
 	var orderInfo model.OrderInfo
 	_ = json.Unmarshal(msg.Body, &orderInfo)
+	// 从上下文中获取父Span
 	parentSpan := opentracing.SpanFromContext(o.Ctx)
 
+	// 初始化商品ID数组和购物车对象数组，创建商品数量映射
 	var goodsIds []int32
 	var shopCarts []model.ShoppingCart
 	goodsNumsMap := make(map[int32]int32)
+	// 开始一个新的Span用于选择购物车中的商品
 	shopCartSpan := opentracing.GlobalTracer().StartSpan("select_shopcart", opentracing.ChildOf(parentSpan.Context()))
+	// 从数据库中查询选中结算的购物车商品
 	if result := global.DB.Where(&model.ShoppingCart{User: orderInfo.User, Checked: true}).Find(&shopCarts); result.RowsAffected == 0 {
+		// 如果没有选中结算的商品，返回回滚状态
 		o.Code = codes.InvalidArgument
 		o.Detail = "没有选中结算的商品"
 		return primitive.RollbackMessageState
 	}
 	shopCartSpan.Finish()
 
+	// 遍历购物车商品，收集商品ID和数量
 	for _, shopCart := range shopCarts {
 		goodsIds = append(goodsIds, shopCart.Goods)
 		goodsNumsMap[shopCart.Goods] = shopCart.Nums
 	}
 
-	//跨服务调用商品微服务
+	// 跨服务调用商品微服务批量查询商品信息
 	queryGoodsSpan := opentracing.GlobalTracer().StartSpan("query_goods", opentracing.ChildOf(parentSpan.Context()))
 	goods, err := global.GoodsSrvClient.BatchGetGoods(context.Background(), &proto.BatchGoodsIdInfo{Id: goodsIds})
 	if err != nil {
+		// 查询商品信息失败，返回回滚状态
 		o.Code = codes.Internal
 		o.Detail = "批量查询商品信息失败"
 		return primitive.RollbackMessageState
 	}
 	queryGoodsSpan.Finish()
 
+	// 计算订单总金额并准备订单商品信息和库存信息
 	var orderAmount float32
 	var orderGoods []*model.OrderGoods
 	var goodsInvInfo []*proto.GoodsInvInfo
@@ -240,29 +252,22 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 		})
 	}
 
-	//跨服务调用库存微服务进行库存扣减
-	/*
-		1. 调用库存服务的trysell
-		2. 调用仓库服务的trysell
-		3. 调用积分服务的tryAdd
-		任何一个服务出现了异常，那么你得调用对应的所有的微服务的cancel接口
-		如果所有的微服务都正常，那么你得调用所有的微服务的confirm
-	*/
+	// 跨服务调用库存微服务扣减库存
 	queryInvSpan := opentracing.GlobalTracer().StartSpan("query_inv", opentracing.ChildOf(parentSpan.Context()))
 	if _, err = global.InventorySrvClient.Sell(context.Background(), &proto.SellInfo{OrderSn: orderInfo.OrderSn, GoodsInfo: goodsInvInfo}); err != nil {
-		//如果是因为网络问题， 这种如何避免误判， 大家自己改写一下sell的返回逻辑
+		// 扣减库存失败，返回回滚状态
 		o.Code = codes.ResourceExhausted
 		o.Detail = "扣减库存失败"
 		return primitive.RollbackMessageState
 	}
 	queryInvSpan.Finish()
 
-	//生成订单表
-	//20210308xxxx
+	// 开始数据库事务，保存订单信息
 	tx := global.DB.Begin()
 	orderInfo.OrderMount = orderAmount
 	saveOrderSpan := opentracing.GlobalTracer().StartSpan("save_order", opentracing.ChildOf(parentSpan.Context()))
 	if result := tx.Save(&orderInfo); result.RowsAffected == 0 {
+		// 保存订单失败，回滚事务并返回提交状态
 		tx.Rollback()
 		o.Code = codes.Internal
 		o.Detail = "创建订单失败"
@@ -276,9 +281,10 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 		orderGood.Order = orderInfo.ID
 	}
 
-	//批量插入orderGoods
+	// 批量插入订单商品
 	saveOrderGoodsSpan := opentracing.GlobalTracer().StartSpan("save_order_goods", opentracing.ChildOf(parentSpan.Context()))
 	if result := tx.CreateInBatches(orderGoods, 100); result.RowsAffected == 0 {
+		// 插入订单商品失败，回滚事务并返回提交状态
 		tx.Rollback()
 		o.Code = codes.Internal
 		o.Detail = "批量插入订单商品失败"
@@ -286,8 +292,10 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 	}
 	saveOrderGoodsSpan.Finish()
 
+	// 删除购物车中的已结算商品
 	deleteShopCartSpan := opentracing.GlobalTracer().StartSpan("delete_shopcart", opentracing.ChildOf(parentSpan.Context()))
 	if result := tx.Where(&model.ShoppingCart{User: orderInfo.User, Checked: true}).Delete(&model.ShoppingCart{}); result.RowsAffected == 0 {
+		// 删除购物车记录失败，回滚事务并返回提交状态
 		tx.Rollback()
 		o.Code = codes.Internal
 		o.Detail = "删除购物车记录失败"
@@ -295,21 +303,26 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 	}
 	deleteShopCartSpan.Finish()
 
-	//发送延时消息
+	// 发送延时消息
 	p, err := rocketmq.NewProducer(producer.WithNameServer([]string{"192.168.128.128:9876"}))
 	if err != nil {
+		// 生成producer失败，抛出异常
 		panic("生成producer失败")
 	}
 
-	//不要在一个进程中使用多个producer， 但是不要随便调用shutdown因为会影响其他的producer
+	// 启动producer
 	if err = p.Start(); err != nil {
+		// 启动producer失败，抛出异常
 		panic("启动producer失败")
 	}
 
+	// 创建新的延时消息
 	msg = primitive.NewMessage("order_timeout", msg.Body)
 	msg.WithDelayTimeLevel(3)
+	// 发送同步延时消息
 	_, err = p.SendSync(context.Background(), msg)
 	if err != nil {
+		// 发送延时消息失败，回滚事务并记录错误
 		zap.S().Errorf("发送延时消息失败: %v\n", err)
 		tx.Rollback()
 		o.Code = codes.Internal
@@ -317,9 +330,7 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 		return primitive.CommitMessageState
 	}
 
-	//if err = p.Shutdown(); err != nil {panic("关闭producer失败")}
-
-	//提交事务
+	// 提交事务
 	tx.Commit()
 	o.Code = codes.OK
 	return primitive.RollbackMessageState

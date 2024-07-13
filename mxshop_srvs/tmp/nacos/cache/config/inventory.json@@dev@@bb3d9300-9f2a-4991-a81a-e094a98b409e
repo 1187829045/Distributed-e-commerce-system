@@ -1,7 +1,7 @@
 {
   "name": "inventory-srv",
   "host": "192.168.128.128",
-  "tags":["imooc", "bobby", "inventory", "srv"],
+  "tags":["llb", "bobby", "inventory", "srv"],
   "mysql": {
     "host": "192.168.128.128",
     "port": 3306,

@@ -27,7 +27,7 @@ func main() {
 	//rsp, _ := c.Search(context.Background(), &empty.Empty{})
 	rsp, err := c.SayHello(context.Background(), &proto.Person{
 		Id:     1000,
-		Email:  "bobby@imooc.com",
+		Email:  "bobby@llb.com",
 		Mobile: "18888888888",
 	})
 	if err != nil {

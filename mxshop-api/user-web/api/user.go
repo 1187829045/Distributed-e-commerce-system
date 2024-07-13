@@ -88,22 +88,18 @@ func HandleValidatorError(c *gin.Context, err error) {
 // GetUserList 获取用户列表
 // ctx: gin 的上下文，用于处理 HTTP 请求和响应
 func GetUserList(ctx *gin.Context) {
-
 	// 拨号连接用户 gRPC 服务器 跨域的问题-后端解决
-	claims, _ := ctx.Get("claims")
-	currentUser := claims.(*models.CustomClaims)
-	zap.S().Infof("访问用户：%d", currentUser.ID)
-	// 生成 gRPC 的客户端并调用接口
+	claims, _ := ctx.Get("claims")               // 从上下文中获取 "claims" 信息
+	currentUser := claims.(*models.CustomClaims) // 将 "claims" 转换为自定义的用户声明类型
+	zap.S().Infof("访问用户：%d", currentUser.ID)     // 记录访问用户的 ID 信息
 
 	// 请求用户列表的参数
-	// context.Background(): 上下文，用于控制 gRPC 调用的生命周期
-	// &proto.PageInfo{Pn: 0, PSize: 0}: 分页信息，Pn 为页码，PSize 为每页大小
-	//Pn 和 PSize 为 0，可能表示获取所有数据，
-	pn := ctx.DefaultQuery("pn", "0")
-	pnInt, _ := strconv.Atoi(pn)
-	pSize := ctx.DefaultQuery("pSize", "10")
-	pSizeInt, _ := strconv.Atoi(pSize)
+	pn := ctx.DefaultQuery("pn", "0")        // 获取查询参数 "pn"，如果未提供则默认值为 "0"
+	pnInt, _ := strconv.Atoi(pn)             // 将 "pn" 转换为整数
+	pSize := ctx.DefaultQuery("pSize", "10") // 获取查询参数 "pSize"，如果未提供则默认值为 "10"
+	pSizeInt, _ := strconv.Atoi(pSize)       // 将 "pSize" 转换为整数
 
+	// 生成 gRPC 的客户端并调用接口
 	rsp, err := global.UserSrvClient.GetUserList(context.Background(), &proto.PageInfo{
 		Pn:    uint32(pnInt),    // 页码
 		PSize: uint32(pSizeInt), // 每页大小
@@ -111,7 +107,7 @@ func GetUserList(ctx *gin.Context) {
 	if err != nil {
 		zap.S().Errorw("[GetUserList]查询【用户列表】失败") // 记录查询用户列表失败的错误信息
 		HandleGrpcErrorToHttp(err, ctx)           // 处理 gRPC 错误
-		return
+		return                                    // 返回，终止函数执行
 	}
 
 	zap.S().Debug("获取用户列表页")         // 记录获取用户列表页的调试信息
@@ -120,12 +116,11 @@ func GetUserList(ctx *gin.Context) {
 	// 遍历用户列表并构造结果
 	// rsp.Data: 用户列表数据
 	for _, value := range rsp.Data {
-		//data := make(map[string]interface{}) // 创建一个空的 map 用于存储用户数据
+		// 创建一个用户响应结构体，填充用户数据
 		user := reponse.UserResponse{
 			Id:       value.Id,
 			NickName: value.NickName,
-			//Birthday: time.Time(time.Unix(int64(value.BirthDay), 0)),
-			Birthday: reponse.JsonTime(time.Unix(int64(value.BirthDay), 0)),
+			Birthday: reponse.JsonTime(time.Unix(int64(value.BirthDay), 0)), // 将生日转换为 JsonTime 格式
 			Gender:   value.Gender,
 			Mobile:   value.Mobile,
 		}
@@ -137,6 +132,7 @@ func GetUserList(ctx *gin.Context) {
 	// result: 返回的用户列表数据
 	ctx.JSON(http.StatusOK, result)
 }
+
 func PassWordLogin(c *gin.Context) {
 	//表单验证
 	//表单验证是一种在用户提交表单数据之前检查和验证输入数据的过程，以确保数据的正确性、完整性和安全性。
@@ -270,7 +266,7 @@ func Register(c *gin.Context) {
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),               //签名的生效时间
 			ExpiresAt: time.Now().Unix() + 60*60*24*30, //30天过期
-			Issuer:    "imooc",
+			Issuer:    "llb",
 		},
 	}
 	token, err := j.CreateToken(claims)

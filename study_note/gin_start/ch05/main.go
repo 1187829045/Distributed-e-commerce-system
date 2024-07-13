@@ -48,7 +48,7 @@ func formPost(c *gin.Context) {
 func welcome(c *gin.Context) {
 	// 从查询参数中获取"firstname"，如果没有提供则默认值为"bobby"
 	firstName := c.DefaultQuery("firstname", "llb")
-	// 从查询参数中获取"lastname"，如果没有提供则默认值为"imooc"
+	// 从查询参数中获取"lastname"，如果没有提供则默认值为"llb"
 	lastName := c.DefaultQuery("lastname", "cqupt")
 
 	// 返回一个包含first_name和last_name的JSON对象

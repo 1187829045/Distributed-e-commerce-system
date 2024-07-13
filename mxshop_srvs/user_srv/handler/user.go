@@ -40,43 +40,39 @@ func ModelToRsponse(user model.User) proto.UserInfoResponse {
 	return userInfoRsp
 }
 
-// Paginate 函数的作用是为了将分页逻辑封装在一个可复用的函数中，以便在数据库查询中轻松设置和应用分页参数，提高代码的复用性、灵活性和可维护性。
+// Paginate 函数的作用是为了将分页逻辑封装在一个可复用的函数中
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page == 0 {
 			page = 1
 		}
-		switch {
-		case pageSize > 100:
-			pageSize = 100
-		case pageSize <= 0:
+		if pageSize < 0 {
 			pageSize = 10
 		}
-		// 偏移量的作用是告诉数据库从查询结果集的哪个位置开始返回数据，配合 Limit（限制条数），可以有效地实现分页查询。
-		offset := (page - 1) * pageSize          // 计算偏移量
-		return db.Offset(offset).Limit(pageSize) // 设置分页参数
+		if pageSize > 100 {
+			pageSize = 100
+		}
+		return db.Offset((page - 1) * pageSize).Limit(pageSize)
 	}
 }
 
 //获取用户列表
 
 func (s *UserServer) GetUserList(ctx context.Context, req *proto.PageInfo) (*proto.UserListResponse, error) {
-	var users []model.User
-	result := global.DB.Find(&users)
+	res := &proto.UserListResponse{}
+	result := global.DB.Find(&model.User{})
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, status.Error(codes.Internal, result.Error.Error())
 	}
-	fmt.Println("用户列表")
-	rsp := &proto.UserListResponse{}
-	rsp.Total = int32(result.RowsAffected) // 设置总用户数
-	//分页查询在应用中通常用于优化用户界面的数据展示和用户体验
-	global.DB.Scopes(Paginate(int(req.Pn), int(req.PSize))).Find(&users) // 分页查询用户
-
-	for _, user := range users {
-		userInfoRsp := ModelToRsponse(user)
-		rsp.Data = append(rsp.Data, &userInfoRsp) // 将用户信息添加到响应数据中
+	fmt.Println("当前是GetUserList")
+	res.Total = int32(result.RowsAffected)
+	var user []model.User
+	global.DB.Scopes(Paginate(int(req.Pn), int(req.PSize))).Find(&user)
+	for _, userInfo := range user {
+		userRsp := ModelToRsponse(userInfo)
+		res.Data = append(res.Data, &userRsp)
 	}
-	return rsp, nil
+	return res, nil
 }
 
 // GetUserByMobile 通过手机号码查询用户
@@ -89,9 +85,9 @@ func (s *UserServer) GetUserByMobile(ctx context.Context, req *proto.MobileReque
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
 	userInfoRsp := ModelToRsponse(user)
 	return &userInfoRsp, nil
+
 }
 
 // GetUserById 通过 ID 查询用户

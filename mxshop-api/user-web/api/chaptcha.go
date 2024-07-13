@@ -8,6 +8,7 @@ import (
 )
 
 // 基于base64生成图片验证码
+
 // 初始化一个默认的内存存储，用于存储验证码
 var store = base64Captcha.DefaultMemStore
 

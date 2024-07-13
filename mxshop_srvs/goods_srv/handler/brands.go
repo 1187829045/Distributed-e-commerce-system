@@ -10,7 +10,8 @@ import (
 	"shop_srvs/goods_srv/proto"
 )
 
-// 品牌
+// 品牌列表
+
 func (s *GoodsServer) BrandList(ctx context.Context, req *proto.BrandFilterRequest) (*proto.BrandListResponse, error) {
 	brandListResponse := proto.BrandListResponse{}
 	var brands []model.Brands

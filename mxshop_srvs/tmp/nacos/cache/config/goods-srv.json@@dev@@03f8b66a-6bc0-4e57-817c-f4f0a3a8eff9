@@ -1,7 +1,7 @@
 {
   "name": "inv-srv",
   "host": "192.168.128.128",
-  "tags":["imooc", "bobby", "goods", "srv"],
+  "tags":["llb", "bobby", "goods", "srv"],
   "mysql": {
     "host": "192.168.128.128",
     "port": 3306,

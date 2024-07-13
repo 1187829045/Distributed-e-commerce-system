@@ -13,6 +13,7 @@ import (
 )
 
 // 商品分类
+
 func (s *GoodsServer) GetAllCategorysList(context.Context, *emptypb.Empty) (*proto.CategoryListResponse, error) {
 	var categorys []model.Category
 	global.DB.Where(&model.Category{Level: 1}).Preload("SubCategory.SubCategory").Find(&categorys)
@@ -21,6 +22,7 @@ func (s *GoodsServer) GetAllCategorysList(context.Context, *emptypb.Empty) (*pro
 }
 
 // 获取子分类
+
 func (s *GoodsServer) GetSubCategory(ctx context.Context, req *proto.CategoryListRequest) (*proto.SubCategoryListResponse, error) {
 	categoryListResponse := proto.SubCategoryListResponse{}
 
@@ -57,6 +59,7 @@ func (s *GoodsServer) GetSubCategory(ctx context.Context, req *proto.CategoryLis
 	categoryListResponse.SubCategorys = subCategoryResponse
 	return &categoryListResponse, nil
 }
+
 func (s *GoodsServer) CreateCategory(ctx context.Context, req *proto.CategoryInfoRequest) (*proto.CategoryInfoResponse, error) {
 	category := model.Category{}
 	category.Name = req.Name

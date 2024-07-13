@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"sale_master/shop_srvs/user_srv/proto"
+	"shop_srvs/user_srv/proto"
 )
 
 var userClient proto.UserClient // 定义 gRPC 客户端

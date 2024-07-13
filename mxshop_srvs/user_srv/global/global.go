@@ -1,10 +1,10 @@
 package global
 
 import (
-	"gorm.io/driver/mysql" // 引入 MySQL 驱动
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger" // 引入 GORM 的日志包
-	"gorm.io/gorm/schema" // 引入 GORM 的数据库模式包
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 	"log"
 	"os"
 	"shop_srvs/user_srv/config"

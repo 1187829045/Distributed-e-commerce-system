@@ -55,8 +55,6 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	//es用来做搜索，我们一般只把搜索和过滤的字段信息保存到es中
 	//一般mysql用来做存储使用，es用来做搜索使用
 	//es想要提高性能， 就要将es的内存设置的够大， 1k 2k
-
-	// 初始化响应对象
 	goodsListResponse := &proto.GoodsListResponse{}
 
 	// 构建 Elasticsearch 查询条件
@@ -72,7 +70,6 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 
 	// 是否热门商品筛选
 	if req.IsHot {
-		//localDB = localDB.Where(model.Goods{IsHot: true})
 		q = q.Filter(elastic.NewTermQuery("is_hot", req.IsHot))
 	}
 
@@ -101,17 +98,22 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	if req.TopCategory > 0 {
 		// 查询顶级分类及其子分类的 ID
 		var category model.Category
+		// 查询顶级分类信息
 		if result := global.DB.First(&category, req.TopCategory); result.RowsAffected == 0 {
+			// 如果未找到顶级分类，返回错误
 			return nil, status.Errorf(codes.NotFound, "商品分类不存在")
 		}
 
 		// 根据分类级别生成 SQL 子查询
 		switch category.Level {
 		case 1:
+			// 一级分类查询其子分类的 ID
 			subQuery = fmt.Sprintf("select id from category where parent_category_id in (select id from category WHERE parent_category_id=%d)", req.TopCategory)
 		case 2:
+			// 二级分类直接查询其子分类的 ID
 			subQuery = fmt.Sprintf("select id from category WHERE parent_category_id=%d", req.TopCategory)
 		case 3:
+			// 三级分类直接使用其自身的 ID
 			subQuery = fmt.Sprintf("select id from category WHERE id=%d", req.TopCategory)
 		}
 
@@ -175,7 +177,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	return goodsListResponse, nil
 }
 
-// 现在用户提交订单有多个商品，你得批量查询商品的信息吧
+// 批量查询商品的信息
 
 func (s *GoodsServer) BatchGetGoods(ctx context.Context, req *proto.BatchGoodsIdInfo) (*proto.GoodsListResponse, error) {
 	goodsListResponse := &proto.GoodsListResponse{}

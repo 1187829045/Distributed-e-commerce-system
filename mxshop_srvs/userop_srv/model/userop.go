@@ -8,6 +8,12 @@ const (
 	WANT_TO_BUY
 )
 
+//LEAVING_MESSAGES: 表示留言，通常用于描述用户留下的消息或通知。
+//COMPLAINT: 表示投诉，用于表示用户的不满或投诉。
+//INQUIRY: 表示询问，用于表示用户的查询或询问。
+//POST_SALE: 表示售后，用于表示与销售后服务相关的活动或操作。
+//WANT_TO_BUY: 表示想要购买，用于表示用户的购买意向或需求
+
 //留言
 
 type LeavingMessages struct {

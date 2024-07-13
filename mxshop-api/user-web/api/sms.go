@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"math/rand"
 	"net/http"
 	"shop-api/user-web/forms"
@@ -12,7 +13,6 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"      // 导入阿里云 SDK 的请求包
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi" // 导入阿里云短信服务包
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8" // 导入 Redis 客户端
 	"shop-api/user-web/global"
 )
 
@@ -24,7 +24,7 @@ func GenerateSmsCode(width int) string {
 	//UnixNano 是 Go 语言中用于获取当前时间的函数之一，它返回的是当前时间的纳秒级别的 Unix 时间戳。
 	rand.Seed(time.Now().UnixNano())
 	//strings.Builder 是 Go 语言中提供的一个用于高效构建字符串的类型。
-	//它在 Go 1.10 版本中引入，用于替代传统的字符串拼接方式（如使用 + 或 fmt.Sprintf）来避免因字符串拼接导致的性能问题。
+	//替代传统的字符串拼接方式（如使用 + 或 fmt.Sprintf）来避免因字符串拼接导致的性能问题。
 	var sb strings.Builder
 	for i := 0; i < width; i++ {
 		// 随机生成数字并添加到字符串构建器中
@@ -78,8 +78,9 @@ func SendSms(ctx *gin.Context) {
 	}
 
 	// 将验证码保存到 Redis 中，使用手机号作为键名，并设置过期时间
+	addr := fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RedisInfo.Port)
 	rdb := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RedisInfo.Port), // Redis 服务器地址和端口
+		Addr: addr, // Redis 服务器地址和端口
 	})
 	rdb.Set(context.Background(), sendSmsForm.Mobile, smsCode, time.Duration(global.ServerConfig.RedisInfo.Expire)*time.Second)
 
