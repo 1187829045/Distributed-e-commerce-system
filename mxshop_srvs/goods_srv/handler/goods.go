@@ -63,7 +63,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 	localDB := global.DB.Model(model.Goods{})
 	//有keyword最好用es去做
 	//使用es就是进行商品的搜索
-	// 关键词搜索
+	//关键词搜索
 	if req.KeyWords != "" {
 		q = q.Must(elastic.NewMultiMatchQuery(req.KeyWords, "name", "goods_brief"))
 	}
@@ -108,7 +108,8 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 		switch category.Level {
 		case 1:
 			// 一级分类查询其子分类的 ID
-			subQuery = fmt.Sprintf("select id from category where parent_category_id in (select id from category WHERE parent_category_id=%d)", req.TopCategory)
+			subQuery = fmt.Sprintf("select id from category where parent_category_id in (select id from category "+
+				"WHERE parent_category_id=%d)", req.TopCategory)
 		case 2:
 			// 二级分类直接查询其子分类的 ID
 			subQuery = fmt.Sprintf("select id from category WHERE parent_category_id=%d", req.TopCategory)
@@ -122,6 +123,8 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 			ID int32
 		}
 		var results []Result
+		//Raw(subQuery):这个方法用于执行原生 SQL 查询
+		//Scan(&results):这个方法用于将查询结果扫描到 results 变量中。
 		global.DB.Model(model.Category{}).Raw(subQuery).Scan(&results)
 		for _, re := range results {
 			categoryIds = append(categoryIds, re.ID)

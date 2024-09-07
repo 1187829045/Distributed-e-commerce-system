@@ -1,7 +1,9 @@
 ## 第一天
 
-1.安装环境
-2.rpc :
+### 1.安装环境
+
+### 2.rpc :
+
 rpc 叫做远程过程调用，一个节点请求另一个节点提供的服务
 对应rpc的是本地过程调用，函数调用是最常见的本地过程调用
 将本地过程调用变成远程过程调用会面临各种问题
@@ -12,33 +14,30 @@ rpc 技术在架构设计上由四部分 客户端，客户端存根，服务端
 
 安装学习了grpc
 
-gRPC（gRPC Remote Procedure Call）是一个高性能、通用的开源远程过程调用（RPC）框架，由Google开发。
+### GRPC（gRPC Remote Procedure Call）
+是一个高性能、通用的开源远程过程调用（RPC）框架，由Google开发。
 它基于HTTP/2协议和Protocol Buffers（protobuf）数据序列化格式，旨在简化跨网络的函数调用，
 使得不同系统之间的通信更高效、更可靠。gRPC适用于构建分布式系统和微服务架构中的服务间通信。
 服务端的数据流模式：这种模式是客户端发起一次请求，服务端返回一段连续的数据流。
 客户端数据来模式：与上面相反，客户端源源不断向服务端发送数据流
 双向数据流模式：上面综合，比如聊天软件
 
-学习protobuf grpc
+### 学习protobuf grpc
 
-# 第三天
-
-## 第五周
-
-grpc的metadata
+## 第三天
+### 拦截器
 在 gRPC 中，拦截器（interceptor）是一种中间件机制，可以在 gRPC 方法调用之前或之后执行一些通用的逻辑。
 
-interceptor := func(ctx context.Context, req interface{},
-info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-fmt.Println("接受到一新的请求")
-return handler(ctx, req)
-}
+       interceptor := func(ctx context.Context, req interface{},
+       info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+       fmt.Println("接受到一新的请求")
+       return handler(ctx, req)
+     }
 
-ctx 是一个上下文对象，它携带了请求的范围和生命周期信息
-req 是请求参数，表示传递给 gRPC 方法的具体请求消息
-info 提供了关于当前调用的一些信息，例如被调用的方法的全名等。
-handler 是实际处理请求的函数，当拦截器完成它的工作之后，可以调用这个函数来继续处理请求。
-拦截器在 gRPC 中扮演着类似于中间件的角色，允许在 gRPC 方法调用之前或之后插入自定义逻辑。这对于实现许多通用功能非常有用
+ctx 是一个上下文对象，它携带了请求的范围和生命周期信息 ，req 是请求参数，表示传递给 gRPC 方法的具体请求消息
+，info 提供了关于当前调用的一些信息，例如被调用的方法的全名等。
+，handler 是实际处理请求的函数，当拦截器完成它的工作之后，可以调用这个函数来继续处理请求。
+，拦截器在 gRPC 中扮演着类似于中间件的角色，允许在 gRPC 方法调用之前或之后插入自定义逻辑。这对于实现许多通用功能非常有用
 
 grpc 通过metadata传输密码，放在拦截器中，可以形成验证的中间件方式
 
@@ -52,30 +51,29 @@ grpc客户端与服务端流程
 
 ### 服务端
 
-`// 创建一个新的 gRPC 服务器实例
-g := grpc.NewServer()
-// 注册 Greeter 服务到 gRPC 服务器
-// 将 Server 的实例传递给生成的 RegisterGreeterServer 方法
-pb.RegisterGreeterServer(g, &Server{})
-// 监听所有网络接口上的 8080 端口
-lis, err := net.Listen("tcp", "0.0.0.0:8080")
-// 启动 gRPC 服务器以监听传入的连接
-// 如果服务器运行过程中出现错误，记录错误并退出程序
-if err := g.Serve(lis); err != nil {
-log.Fatalf("failed to serve: %v", err)
-}
-`
+            // 创建一个新的 gRPC 服务器实例
+             g := grpc.NewServer()
+           // 注册 Greeter 服务到 gRPC 服务器
+           // 将 Server 的实例传递给生成的 RegisterGreeterServer 方法
+           pb.RegisterGreeterServer(g, &Server{})
+            // 监听所有网络接口上的 8080 端口
+           lis, err := net.Listen("tcp", "0.0.0.0:8080")
+           // 启动 gRPC 服务器以监听传入的连接
+           // 如果服务器运行过程中出现错误，记录错误并退出程序
+           if err := g.Serve(lis); err != nil {
+           log.Fatalf("failed to serve: %v", err)
+            }     
+
 ### 客户端
 
-`// 创建一个与 gRPC 服务器的连接
-conn, err := grpc.Dial("127.0.0.1:8080", grpc.WithInsecure()) // 改为 8080 端口
-// 延迟关闭连接，确保程序结束前连接会被关闭
-defer conn.Close()
-// 创建一个新的 Greeter 客户端实例
-c := proto.NewGreeterClient(conn)
-// 调用 服务端定义的方法
-r, err := c.SayHello(context.Background(), &proto.HelloRequest{Name: "bobby"})
-`
+            // 创建一个与 gRPC 服务器的连接
+            conn, err := grpc.Dial("127.0.0.1:8080", grpc.WithInsecure()) // 改为 8080 端口
+            // 延迟关闭连接，确保程序结束前连接会被关闭
+            defer conn.Close()
+            // 创建一个新的 Greeter 客户端实例
+             c := proto.NewGreeterClient(conn)
+           // 调用 服务端定义的方法
+            r, err := c.SayHello(context.Background(), &proto.HelloRequest{Name: "bobby"})
 ## 第六周
 ### 单体应用
 

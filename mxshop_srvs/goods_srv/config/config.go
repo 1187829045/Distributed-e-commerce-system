@@ -20,10 +20,10 @@ type EsConfig struct { //ES配置
 
 type ServerConfig struct {
 	Name       string       `mapstructure:"name" json:"name"`
-	Host       string       `mapstructure:"host" json:"host"`
-	Tags       []string     `mapstructure:"tags" json:"tags"`
 	MysqlInfo  MysqlConfig  `mapstructure:"mysql" json:"mysql"`
 	ConsulInfo ConsulConfig `mapstructure:"consul" json:"consul"`
+	Host       string       `mapstructure:"host" json:"host"`
+	Tags       []string     `mapstructure:"tags" json:"tags"`
 	EsInfo     EsConfig     `mapstructure:"es" json:"es"` //加入该字段
 }
 

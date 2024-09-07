@@ -47,58 +47,82 @@ func (*InventoryServer) InvDetail(ctx context.Context, req *proto.GoodsInvInfo) 
 }
 
 func (*InventoryServer) Sell(ctx context.Context, req *proto.SellInfo) (*emptypb.Empty, error) {
-	//扣减库存， 本地事务 [1:10,  2:5, 3: 20]
-	//数据库基本的一个应用场景：数据库事务
-	//并发情况之下 可能会出现超卖 1
+	// 扣减库存，支持本地事务。此处示例包含多个商品 [1:10,  2:5, 3:20]
+
+	// 并发情况下，可能会出现超卖现象，因此使用分布式锁来防止这种情况。
+
+	// 创建 Redis 客户端
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr: "192.168.128.128:6379",
+		Addr: "192.168.128.128:6379", // Redis 服务器地址
 	})
-	pool := goredis.NewPool(client) // or, pool := redigo.NewPool(...)
+
+	// 创建 Redis 连接池
+	pool := goredis.NewPool(client) // 也可以使用 redigo.NewPool(client)
+
+	// 创建一个 Redsync 对象（rs），用于实现分布式锁
 	rs := redsync.New(pool)
 
+	// 开启数据库事务
 	tx := global.DB.Begin()
-	//这个时候应该先查询表，然后确定这个订单是否已经扣减过库存了，已经扣减过了就别扣减了
-	//并发时候会有漏洞， 同一个时刻发送了重复了多次， 使用锁，分布式锁
-	sellDetail := model.StockSellDetail{
-		OrderSn: req.OrderSn,
-		Status:  1,
+
+	// 在扣减库存前，应该先查询订单是否已经扣减过库存，以防止重复扣减
+	// 在并发环境下，这种防止重复请求的机制尤其重要，这里使用分布式锁来防止
+	var existingSellDetail model.StockSellDetail
+	if result := tx.Where("order_sn = ?", req.OrderSn).First(&existingSellDetail); result.RowsAffected > 0 {
+		// 如果订单号已存在，说明已经处理过，直接返回
+		return &emptypb.Empty{}, nil
 	}
-	var details []model.GoodsDetail
+	// 创建库存扣减记录对象
+	sellDetail := model.StockSellDetail{
+		OrderSn: req.OrderSn, // 订单号
+		Status:  1,           // 扣减状态，1表示扣减中
+	}
+
+	var details []model.GoodsDetail // 存储订单中的商品信息
 	for _, goodInfo := range req.GoodsInfo {
 		details = append(details, model.GoodsDetail{
-			Goods: goodInfo.GoodsId,
-			Num:   goodInfo.Num,
+			Goods: goodInfo.GoodsId, // 商品ID
+			Num:   goodInfo.Num,     // 商品数量
 		})
 
 		var inv model.Inventory
+
+		// 创建分布式锁，锁定当前商品的库存
 		mutex := rs.NewMutex(fmt.Sprintf("goods_%d", goodInfo.GoodsId))
 		if err := mutex.Lock(); err != nil {
-			return nil, status.Errorf(codes.Internal, "获取redis分布式锁异常")
+			return nil, status.Errorf(codes.Internal, "获取Redis分布式锁异常") // 获取锁失败
 		}
 
+		// 查询商品库存信息
 		if result := global.DB.Where(&model.Inventory{Goods: goodInfo.GoodsId}).First(&inv); result.RowsAffected == 0 {
-			tx.Rollback() //回滚之前的操作
+			tx.Rollback() // 如果查询不到库存信息，回滚事务
 			return nil, status.Errorf(codes.InvalidArgument, "没有库存信息")
 		}
-		//判断库存是否充足
+
+		// 检查库存是否充足
 		if inv.Stocks < goodInfo.Num {
-			tx.Rollback() //回滚之前的操作
+			tx.Rollback() // 库存不足，回滚事务
 			return nil, status.Errorf(codes.ResourceExhausted, "库存不足")
 		}
-		//扣减， 会出现数据不一致的问题 - 锁，分布式锁
-		inv.Stocks -= goodInfo.Num
-		tx.Save(&inv)
 
+		// 扣减库存
+		inv.Stocks -= goodInfo.Num
+		tx.Save(&inv) // 保存库存变化
+
+		// 释放分布式锁
 		if ok, err := mutex.Unlock(); !ok || err != nil {
-			return nil, status.Errorf(codes.Internal, "释放redis分布式锁异常")
+			return nil, status.Errorf(codes.Internal, "释放Redis分布式锁异常") // 释放锁失败
 		}
 	}
+
+	// 将订单详情写入库存扣减历史记录表
 	sellDetail.Detail = details
-	//写selldetail表
 	if result := tx.Create(&sellDetail); result.RowsAffected == 0 {
-		tx.Rollback()
+		tx.Rollback() // 如果写入失败，回滚事务
 		return nil, status.Errorf(codes.Internal, "保存库存扣减历史失败")
 	}
+
+	// 提交事务，保存所有更改
 	tx.Commit()
 	return &emptypb.Empty{}, nil
 }
@@ -248,21 +272,24 @@ func AutoReback(ctx context.Context, msgs ...*primitive.MessageExt) (consumer.Co
 		tx := global.DB.Begin()
 		var sellDetail model.StockSellDetail
 		// 查询数据库中状态为 1 的订单销售明细
-		if result := tx.Model(&model.StockSellDetail{}).Where(&model.StockSellDetail{OrderSn: orderInfo.OrderSn, Status: 1}).First(&sellDetail); result.RowsAffected == 0 {
+		if result := tx.Model(&model.StockSellDetail{}).Where(&model.StockSellDetail{OrderSn: orderInfo.OrderSn, Status: 1}).
+			First(&sellDetail); result.RowsAffected == 0 {
 			return consumer.ConsumeSuccess, nil // 如果未找到匹配记录，返回消费成功
 		}
 
 		// 如果查询到订单销售明细，则逐个归还库存
 		for _, orderGood := range sellDetail.Detail {
 			// 更新库存，将库存数量增加对应的商品数量
-			if result := tx.Model(&model.Inventory{}).Where(&model.Inventory{Goods: orderGood.Goods}).Update("stocks", gorm.Expr("stocks+?", orderGood.Num)); result.RowsAffected == 0 {
+			if result := tx.Model(&model.Inventory{}).Where(&model.Inventory{Goods: orderGood.Goods}).
+				Update("stocks", gorm.Expr("stocks+?", orderGood.Num)); result.RowsAffected == 0 {
 				tx.Rollback()                          // 如果更新库存失败，回滚事务
 				return consumer.ConsumeRetryLater, nil // 返回重试消费的信号
 			}
 		}
 
 		// 更新订单销售明细的状态为 2（已归还库存）
-		if result := tx.Model(&model.StockSellDetail{}).Where(&model.StockSellDetail{OrderSn: orderInfo.OrderSn}).Update("status", 2); result.RowsAffected == 0 {
+		if result := tx.Model(&model.StockSellDetail{}).Where(&model.StockSellDetail{OrderSn: orderInfo.OrderSn}).
+			Update("status", 2); result.RowsAffected == 0 {
 			tx.Rollback()                          // 如果更新状态失败，回滚事务
 			return consumer.ConsumeRetryLater, nil // 返回重试消费的信号
 		}

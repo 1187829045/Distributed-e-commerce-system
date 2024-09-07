@@ -41,6 +41,7 @@ func ModelToRsponse(user model.User) proto.UserInfoResponse {
 }
 
 // Paginate 函数的作用是为了将分页逻辑封装在一个可复用的函数中
+// 从第 (page - 1) * pageSize 条记录开始读取数据。例如，第一页从第 0 条数据开始，第二页从第 pageSize 条数据开始，依此类推。
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page == 0 {
@@ -150,10 +151,16 @@ func (s *UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) 
 // CheckPassWord 校验密码
 func (s *UserServer) CheckPassWord(ctx context.Context, req *proto.PasswordCheckInfo) (*proto.CheckResponse, error) {
 	// 设置密码校验选项
+	//SaltLength（16）：盐的长度，盐是一种随机生成的数据，用来与密码混合后再进行哈希，以增加安全性。
+	//Iterations（100）：迭代次数，表示哈希函数在生成加密密码时要重复计算多少次。
+	//KeyLength（32）：生成的密钥长度。
+	//HashFunction（sha512.New）：使用 SHA-512 哈希函数来加密密码。
 	options := &password.Options{16, 100, 32, sha512.New}
 	// 拆分加密后的密码
 	passwordInfo := strings.Split(req.EncryptedPassword, "$")
 	// 校验密码
+	//passwordInfo[2] 通常是从加密密码中提取出的盐值。
+	//passwordInfo[3] 通常是提取出的实际哈希值。
 	check := password.Verify(req.Password, passwordInfo[2], passwordInfo[3], options)
 	// 返回校验结果
 	return &proto.CheckResponse{Success: check}, nil

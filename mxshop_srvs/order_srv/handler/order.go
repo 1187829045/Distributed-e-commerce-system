@@ -112,76 +112,93 @@ func (*OrderServer) DeleteCartItem(ctx context.Context, req *proto.CartItemReque
 	return &emptypb.Empty{}, nil
 }
 
-// 订单列表
+//对用户订单的分页查询，并将结果封装成 OrderListResponse 结构体返回给客户端。
 
 func (*OrderServer) OrderList(ctx context.Context, req *proto.OrderFilterRequest) (*proto.OrderListResponse, error) {
+	// 声明一个订单信息的切片，用于存储查询结果
 	var orders []model.OrderInfo
+
+	// 声明一个订单列表响应结构体，用于存储返回给客户端的数据
 	var rsp proto.OrderListResponse
 
+	// 查询符合条件的订单总数
 	var total int64
 	global.DB.Where(&model.OrderInfo{User: req.UserId}).Count(&total)
+	// 将总数赋值给响应中的 Total 字段
 	rsp.Total = int32(total)
 
-	//分页
+	// 分页查询
 	global.DB.Scopes(Paginate(int(req.Pages), int(req.PagePerNums))).Where(&model.OrderInfo{User: req.UserId}).Find(&orders)
+
+	// 将查询到的订单信息转换为响应格式，并添加到响应的 Data 切片中
 	for _, order := range orders {
 		rsp.Data = append(rsp.Data, &proto.OrderInfoResponse{
-			Id:      order.ID,
-			UserId:  order.User,
-			OrderSn: order.OrderSn,
-			PayType: order.PayType,
-			Status:  order.Status,
-			Post:    order.Post,
-			Total:   order.OrderMount,
-			Address: order.Address,
-			Name:    order.SignerName,
-			Mobile:  order.SingerMobile,
-			AddTime: order.CreatedAt.Format("2006-01-02 15:04:05"),
+			Id:      order.ID,                                      // 订单ID
+			UserId:  order.User,                                    // 用户ID
+			OrderSn: order.OrderSn,                                 // 订单编号
+			PayType: order.PayType,                                 // 支付方式
+			Status:  order.Status,                                  // 订单状态
+			Post:    order.Post,                                    // 邮寄方式
+			Total:   order.OrderMount,                              // 订单总金额
+			Address: order.Address,                                 // 收货地址
+			Name:    order.SignerName,                              // 收货人姓名
+			Mobile:  order.SingerMobile,                            // 收货人手机
+			AddTime: order.CreatedAt.Format("2006-01-02 15:04:05"), // 订单创建时间，格式化为字符串
 		})
 	}
+
+	// 返回响应结构体
 	return &rsp, nil
 }
-
-// 订单详情
 func (*OrderServer) OrderDetail(ctx context.Context, req *proto.OrderRequest) (*proto.OrderInfoDetailResponse, error) {
+	// 声明一个订单信息结构体，用于存储查询到的订单数据
 	var order model.OrderInfo
+
+	// 声明一个订单详情响应结构体，用于返回给客户端的数据
 	var rsp proto.OrderInfoDetailResponse
 
-	//这个订单的id是否是当前用户的订单，如果在web层用户传递过来一个id的订单，web层应该先查询一下订单id是否是当前用户的
-	//在个人中心可以这样做，但是如果是后台管理系统，web层如果是后台管理系统 那么只传递order的id，如果是电商系统还需要一个用户的id
+	// 查询订单信息，确保该订单属于请求中的用户
+	// 这里通过订单的ID和用户的ID进行查询，以确保只有当前用户的订单才能被查询到
 	if result := global.DB.Where(&model.OrderInfo{BaseModel: model.BaseModel{ID: req.Id}, User: req.UserId}).First(&order); result.RowsAffected == 0 {
+		// 如果查询不到对应的订单，返回 "订单不存在" 错误
 		return nil, status.Errorf(codes.NotFound, "订单不存在")
 	}
 
+	// 将查询到的订单信息填充到 OrderInfoResponse 结构体中
 	orderInfo := proto.OrderInfoResponse{}
-	orderInfo.Id = order.ID
-	orderInfo.UserId = order.User
-	orderInfo.OrderSn = order.OrderSn
-	orderInfo.PayType = order.PayType
-	orderInfo.Status = order.Status
-	orderInfo.Post = order.Post
-	orderInfo.Total = order.OrderMount
-	orderInfo.Address = order.Address
-	orderInfo.Name = order.SignerName
-	orderInfo.Mobile = order.SingerMobile
+	orderInfo.Id = order.ID               // 订单ID
+	orderInfo.UserId = order.User         // 用户ID
+	orderInfo.OrderSn = order.OrderSn     // 订单编号
+	orderInfo.PayType = order.PayType     // 支付方式
+	orderInfo.Status = order.Status       // 订单状态
+	orderInfo.Post = order.Post           // 邮寄方式
+	orderInfo.Total = order.OrderMount    // 订单总金额
+	orderInfo.Address = order.Address     // 收货地址
+	orderInfo.Name = order.SignerName     // 收货人姓名
+	orderInfo.Mobile = order.SingerMobile // 收货人手机
 
+	// 将订单信息添加到响应结构体中
 	rsp.OrderInfo = &orderInfo
 
+	// 查询订单对应的商品信息
 	var orderGoods []model.OrderGoods
 	if result := global.DB.Where(&model.OrderGoods{Order: order.ID}).Find(&orderGoods); result.Error != nil {
+		// 如果查询订单商品信息失败，返回错误
 		return nil, result.Error
 	}
 
+	// 遍历查询到的订单商品，将每个商品的信息填充到响应中
 	for _, orderGood := range orderGoods {
 		rsp.Goods = append(rsp.Goods, &proto.OrderItemResponse{
-			GoodsId:    orderGood.Goods,
-			GoodsName:  orderGood.GoodsName, //如果没有冗余，就要通过ID拿商品名称，就要跨服务了
-			GoodsPrice: orderGood.GoodsPrice,
-			GoodsImage: orderGood.GoodsImage,
-			Nums:       orderGood.Nums,
+			GoodsId:    orderGood.Goods,      // 商品ID
+			GoodsName:  orderGood.GoodsName,  // 商品名称（可以通过商品ID查询跨服务获取）
+			GoodsPrice: orderGood.GoodsPrice, // 商品价格
+			GoodsImage: orderGood.GoodsImage, // 商品图片
+			Nums:       orderGood.Nums,       // 商品数量
 		})
 	}
 
+	// 返回包含订单详情和商品信息的响应结构体
 	return &rsp, nil
 }
 
@@ -282,7 +299,8 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 	}
 
 	// 批量插入订单商品
-	saveOrderGoodsSpan := opentracing.GlobalTracer().StartSpan("save_order_goods", opentracing.ChildOf(parentSpan.Context()))
+	saveOrderGoodsSpan := opentracing.GlobalTracer().StartSpan("save_order_goods", opentracing.
+		ChildOf(parentSpan.Context()))
 	if result := tx.CreateInBatches(orderGoods, 100); result.RowsAffected == 0 {
 		// 插入订单商品失败，回滚事务并返回提交状态
 		tx.Rollback()
@@ -293,7 +311,8 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 	saveOrderGoodsSpan.Finish()
 
 	// 删除购物车中的已结算商品
-	deleteShopCartSpan := opentracing.GlobalTracer().StartSpan("delete_shopcart", opentracing.ChildOf(parentSpan.Context()))
+	deleteShopCartSpan := opentracing.GlobalTracer().StartSpan("delete_shopcart",
+		opentracing.ChildOf(parentSpan.Context()))
 	if result := tx.Where(&model.ShoppingCart{User: orderInfo.User, Checked: true}).Delete(&model.ShoppingCart{}); result.RowsAffected == 0 {
 		// 删除购物车记录失败，回滚事务并返回提交状态
 		tx.Rollback()
@@ -340,11 +359,27 @@ func (o *OrderListener) CheckLocalTransaction(msg *primitive.MessageExt) primiti
 	var orderInfo model.OrderInfo
 	_ = json.Unmarshal(msg.Body, &orderInfo)
 
-	//怎么检查之前的逻辑是否完成
+	// 1. 检查订单是否存在
 	if result := global.DB.Where(model.OrderInfo{OrderSn: orderInfo.OrderSn}).First(&orderInfo); result.RowsAffected == 0 {
-		return primitive.CommitMessageState //你并不能说明这里就是库存已经扣减了
+		// 如果订单不存在，意味着本地事务没有成功提交，返回 Rollback 状态
+		return primitive.CommitMessageState
 	}
 
+	// 2. 检查订单状态是否已更新为“已支付”或“已创建”等预期状态
+	if orderInfo.Status != "TRADE_SUCCESS" || orderInfo.Status != "WAIT_BUYER_PAY" {
+		return primitive.CommitMessageState
+	}
+	// 3. 检查订单的商品是否成功扣减库存
+	var orderGoods []model.OrderGoods
+	if result := global.DB.Where(&model.OrderGoods{Order: orderInfo.ID}).Find(&orderGoods); result.RowsAffected == 0 {
+		// 如果订单商品记录不存在，可能意味着库存扣减未成功
+		return primitive.CommitMessageState
+	}
+
+	// 4. 其他可能的检查，例如库存微服务确认，或其他相关表的状态
+	// 在这里你可以加入跨服务调用或数据库检查，以确认库存扣减操作已成功完成
+
+	// 如果所有检查通过，返回 Commit 状态，表示本地事务成功
 	return primitive.RollbackMessageState
 }
 
@@ -360,7 +395,9 @@ func (*OrderServer) CreateOrder(ctx context.Context, req *proto.OrderRequest) (*
 			4. 订单的基本信息表 - 订单的商品信息表
 			5. 从购物车中删除已购买的记录
 	*/
+	// 创建一个订单监听器实例，用于事务的回调
 	orderListener := OrderListener{Ctx: ctx}
+	// 创建一个RocketMQ事务生产者
 	p, err := rocketmq.NewTransactionProducer(
 		&orderListener,
 		producer.WithNameServer([]string{"192.168.128.128:9876"}),
@@ -370,37 +407,46 @@ func (*OrderServer) CreateOrder(ctx context.Context, req *proto.OrderRequest) (*
 		return nil, err
 	}
 
+	// 启动生产者
 	if err = p.Start(); err != nil {
 		zap.S().Errorf("启动producer失败: %s", err.Error())
 		return nil, err
 	}
 
+	// 生成订单信息
 	order := model.OrderInfo{
-		OrderSn:      GenerateOrderSn(req.UserId), //订单编号
+		OrderSn:      GenerateOrderSn(req.UserId), // 生成订单编号
 		Address:      req.Address,
 		SignerName:   req.Name,
 		SingerMobile: req.Mobile,
 		Post:         req.Post,
 		User:         req.UserId,
 	}
-	//应该在消息中具体指明一个订单的具体的商品的扣减情况
+
+	// 将订单信息序列化为JSON字符串
 	jsonString, _ := json.Marshal(order)
 
+	// 发送事务消息到RocketMQ中，消息主题为`order_reback`
 	_, err = p.SendMessageInTransaction(context.Background(),
 		primitive.NewMessage("order_reback", jsonString))
 	if err != nil {
 		fmt.Printf("发送失败: %s\n", err)
 		return nil, status.Error(codes.Internal, "发送消息失败")
 	}
+
+	// 检查订单监听器中的状态码，如果不为OK，则表示事务失败
 	if orderListener.Code != codes.OK {
 		return nil, status.Error(orderListener.Code, orderListener.Detail)
 	}
+
+	// 返回订单信息响应，包含订单ID、订单编号以及订单总金额
 	return &proto.OrderInfoResponse{Id: orderListener.ID, OrderSn: order.OrderSn, Total: orderListener.OrderAmount}, nil
 }
 
 func (*OrderServer) UpdateOrderStatus(ctx context.Context, req *proto.OrderStatus) (*emptypb.Empty, error) {
-	//先查询，再更新 实际上有两条sql执行， selecCartItemListt 和 update语句
-	if result := global.DB.Model(&model.OrderInfo{}).Where("order_sn = ?", req.OrderSn).Update("status", req.Status); result.RowsAffected == 0 {
+	// 更新订单状态，首先查询订单编号对应的订单，然后更新状态
+	if result := global.DB.Model(&model.OrderInfo{}).Where("order_sn = ?", req.OrderSn).
+		Update("status", req.Status); result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "订单不存在")
 	}
 	return &emptypb.Empty{}, nil

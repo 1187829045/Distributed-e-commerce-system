@@ -12,7 +12,7 @@ import (
 	"shop_srvs/goods_srv/proto"
 )
 
-// 商品分类
+// 商品目录列表
 
 func (s *GoodsServer) GetAllCategorysList(context.Context, *emptypb.Empty) (*proto.CategoryListResponse, error) {
 	var categorys []model.Category
@@ -21,16 +21,18 @@ func (s *GoodsServer) GetAllCategorysList(context.Context, *emptypb.Empty) (*pro
 	return &proto.CategoryListResponse{JsonData: string(b)}, nil
 }
 
-// 获取子分类
-
+// 获取子类目
 func (s *GoodsServer) GetSubCategory(ctx context.Context, req *proto.CategoryListRequest) (*proto.SubCategoryListResponse, error) {
+	// 创建一个 SubCategoryListResponse 对象，用来存储响应数据
 	categoryListResponse := proto.SubCategoryListResponse{}
 
 	var category model.Category
+	// 尝试从数据库中获取指定 ID 的分类信息，如果没有找到，则返回错误
 	if result := global.DB.First(&category, req.Id); result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "商品分类不存在")
 	}
 
+	// 将获取到的分类信息填充到 CategoryInfoResponse 对象中，并赋值给响应的 Info 字段
 	categoryListResponse.Info = &proto.CategoryInfoResponse{
 		Id:             category.ID,
 		Name:           category.Name,
@@ -40,12 +42,11 @@ func (s *GoodsServer) GetSubCategory(ctx context.Context, req *proto.CategoryLis
 	}
 
 	var subCategorys []model.Category
-	//preloads := "SubCategory"
-	//if category.Level == 1 {
-	//	preloads = "SubCategory.SubCategory"
-	//}
+	// 查询当前分类下的所有子分类，条件是 ParentCategoryID 等于请求的分类 ID
 	global.DB.Where(&model.Category{ParentCategoryID: req.Id}).Find(&subCategorys)
+
 	var subCategoryResponse []*proto.CategoryInfoResponse
+	// 将每个子分类的信息转换为 CategoryInfoResponse 并添加到 subCategoryResponse 列表中
 	for _, subCategory := range subCategorys {
 		subCategoryResponse = append(subCategoryResponse, &proto.CategoryInfoResponse{
 			Id:             subCategory.ID,
@@ -56,7 +57,9 @@ func (s *GoodsServer) GetSubCategory(ctx context.Context, req *proto.CategoryLis
 		})
 	}
 
+	// 将子分类信息列表赋值给响应的 SubCategorys 字段
 	categoryListResponse.SubCategorys = subCategoryResponse
+	// 返回完整的响应对象
 	return &categoryListResponse, nil
 }
 

@@ -27,7 +27,7 @@ type Inventory struct {
 	Goods int32 `gorm:"type:int;index"`
 	//库存
 	Stocks  int32 `gorm:"type:int"`
-	Version int32 `gorm:"type:int"` //分布式锁的乐观锁
+	Version int32 `gorm:"type:int"` //版本号
 }
 
 type InventoryNew struct {

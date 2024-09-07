@@ -41,7 +41,7 @@ func InitConfig() {
 	// 使用 zap 记录配置信息
 	zap.S().Infof("配置信息: %v", global.NacosConfig)
 
-	// 从 Nacos 中读取配置信息
+	// 从  global.NacosConfig  中读取配置信息
 	sc := []constant.ServerConfig{
 		{
 			IpAddr: global.NacosConfig.Host, // Nacos 服务器的 IP 地址

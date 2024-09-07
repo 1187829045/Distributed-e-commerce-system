@@ -94,6 +94,7 @@ func main() {
 		// Handle error
 		panic(err)
 	}
+
 	if !createIndex.Acknowledged {
 		// Not acknowledged
 	}
