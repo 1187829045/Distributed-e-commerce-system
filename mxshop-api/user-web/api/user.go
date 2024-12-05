@@ -31,7 +31,8 @@ func removeTopStruct(fileds map[string]string) map[string]string {
 	return rsp
 }
 
-// HandleGrpcErrorToHttp 将 gRPC 错误转换为 HTTP 响应
+//将 gRPC 错误转换为 HTTP 响应
+
 func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	if err != nil {
 		// 将错误转换为 gRPC 状态
@@ -41,6 +42,7 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 			case codes.NotFound:
 				c.JSON(http.StatusNotFound, gin.H{
 					"msg": e.Message(), // 返回未找到的错误信息
+
 				})
 			case codes.Internal:
 				c.JSON(http.StatusInternalServerError, gin.H{
@@ -85,13 +87,11 @@ func HandleValidatorError(c *gin.Context, err error) {
 	return
 }
 
-// GetUserList 获取用户列表
-// ctx: gin 的上下文，用于处理 HTTP 请求和响应
 func GetUserList(ctx *gin.Context) {
 	// 拨号连接用户 gRPC 服务器 跨域的问题-后端解决
 	claims, _ := ctx.Get("claims")               // 从上下文中获取 "claims" 信息
 	currentUser := claims.(*models.CustomClaims) // 将 "claims" 转换为自定义的用户声明类型
-	zap.S().Infof("访问用户：%d", currentUser.ID)     // 记录访问用户的 ID 信息
+	zap.S().Infof("访问用户：%d", currentUser.ID) // 记录访问用户的 ID 信息
 
 	// 请求用户列表的参数
 	pn := ctx.DefaultQuery("pn", "0")        // 获取查询参数 "pn"，如果未提供则默认值为 "0"
@@ -106,11 +106,11 @@ func GetUserList(ctx *gin.Context) {
 	})
 	if err != nil {
 		zap.S().Errorw("[GetUserList]查询【用户列表】失败") // 记录查询用户列表失败的错误信息
-		HandleGrpcErrorToHttp(err, ctx)           // 处理 gRPC 错误
-		return                                    // 返回，终止函数执行
+		HandleGrpcErrorToHttp(err, ctx)                   // 处理 gRPC 错误
+		return                                            // 返回，终止函数执行
 	}
 
-	zap.S().Debug("获取用户列表页")         // 记录获取用户列表页的调试信息
+	zap.S().Debug("获取用户列表页")  // 记录获取用户列表页的调试信息
 	result := make([]interface{}, 0) // 创建一个空的结果列表
 
 	// 遍历用户列表并构造结果
@@ -120,7 +120,7 @@ func GetUserList(ctx *gin.Context) {
 		user := reponse.UserResponse{
 			Id:       value.Id,
 			NickName: value.NickName,
-			Birthday: reponse.JsonTime(time.Unix(int64(value.BirthDay), 0)), // 将生日转换为 JsonTime 格式
+			Birthday: reponse.JsonTime(time.Unix(int64(value.BirthDay), 0)),
 			Gender:   value.Gender,
 			Mobile:   value.Mobile,
 		}

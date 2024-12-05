@@ -27,5 +27,4 @@ func main() {
 	// 打印输出解析后的 ServerConfig 结构体
 	fmt.Println(serverConfig)
 	fmt.Printf("%v", v.Get("name"))
-
 }

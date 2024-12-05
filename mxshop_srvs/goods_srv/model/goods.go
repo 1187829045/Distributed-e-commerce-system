@@ -18,9 +18,9 @@ type Category struct {
 	Name             string      `gorm:"type:varchar(20);not null" json:"name"`
 	ParentCategoryID int32       `json:"parent"`
 	ParentCategory   *Category   `json:"-"`
-	SubCategory      []*Category `gorm:"foreignKey:ParentCategoryID;references:ID" json:"sub_category"` //子目录
-	Level            int32       `gorm:"type:int;not null;default:1" json:"level"`                      //几级类目
-	IsTab            bool        `gorm:"default:false;not null" json:"is_tab"`                          //是否展现在Tab栏
+	SubCategory      []*Category `gorm:"foreignKey:ParentCategoryID;references:ID" json:"sub_category"`
+	Level            int32       `gorm:"type:int;not null;default:1" json:"level"`
+	IsTab            bool        `gorm:"default:false;not null" json:"is_tab"`
 }
 
 type Brands struct {
@@ -67,7 +67,7 @@ type Goods struct {
 	IsHot    bool `gorm:"default:false;not null"`
 
 	Name            string   `gorm:"type:varchar(50);not null"`
-	GoodsSn         string   `gorm:"type:varchar(50);not null"` //订单编号
+	GoodsSn         string   `gorm:"type:varchar(50);not null"` //商品编号
 	ClickNum        int32    `gorm:"type:int;default:0;not null"`
 	SoldNum         int32    `gorm:"type:int;default:0;not null"`
 	FavNum          int32    `gorm:"type:int;default:0;not null"`
@@ -116,7 +116,6 @@ func (g *Goods) AfterCreate(tx *gorm.DB) (err error) {
 }
 
 //商品的更新
-// AfterUpdate 是一个 GORM 钩子函数，在使用 GORM（一个用于 Go 语言的 ORM 库）更新 Goods 对象后会被自动调用。
 
 func (g *Goods) AfterUpdate(tx *gorm.DB) (err error) {
 	esModel := EsGoods{

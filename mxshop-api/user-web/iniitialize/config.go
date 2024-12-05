@@ -12,14 +12,10 @@ import (
 	"shop-api/user-web/global" // 导入全局变量包
 )
 
-// 注释：github.com/spf13/viper 是一个强大的 Go 语言库，用于读取和管理配置文件。它支持多种格式的配置文件（如 JSON、TOML、YAML、HCL、INI 等），
-// 并提供了便捷的功能来读取和管理这些配置。viper 还支持从环境变量、命令行标志、远程配置系统等多个源读取配置。
-
 // GetEnvInfo 从环境变量中获取配置信息
 func GetEnvInfo(env string) bool {
-	viper.AutomaticEnv()      // 自动从环境变量中读取配置信息
-	return viper.GetBool(env) // 获取布尔类型的环境变量值
-	// 刚才设置的环境变量想要生效，我们必须得重启 goland
+	viper.AutomaticEnv()
+	return viper.GetBool(env)
 }
 
 // InitConfig 初始化配置文件
@@ -31,17 +27,16 @@ func InitConfig() {
 		configFileName = fmt.Sprintf("user-web/%s-debug.yaml", configFilePrefix) // 调试环境配置文件路径
 	}
 
-	v := viper.New()                         // 创建一个新的 viper 实例
+	v := viper.New()
 	v.SetConfigFile(configFileName)          // 设置配置文件路径
 	if err := v.ReadInConfig(); err != nil { // 读取配置文件
 		panic(err) // 如果读取配置文件失败，则抛出错误
 	}
 	// 这个对象如何在其他文件中使用 - 全局变量
 	if err := v.Unmarshal(global.NacosConfig); err != nil { // 将配置文件解析到全局变量 NacosConfig
-		panic(err) // 如果解析配置文件失败，则抛出错误
+		panic(err)
 	}
 	zap.S().Infof("配置信息: &v", global.NacosConfig) // 打印配置信息
-	//第十周
 	// 从 nacos 中读取配置信息
 	sc := []constant.ServerConfig{
 		{

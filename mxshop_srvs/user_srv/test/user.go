@@ -63,8 +63,8 @@ func main() {
 	Init() // 初始化 gRPC 客户端连接
 
 	// 测试功能
-	TestGetUserList() // 测试获取用户列表
-	//TestCreateUser()  // 测试创建用户
+	//TestGetUserList() // 测试获取用户列表
+	TestCreateUser() // 测试创建用户
 
 	conn.Close() // 关闭 gRPC 连接
 }

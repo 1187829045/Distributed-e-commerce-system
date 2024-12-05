@@ -6,7 +6,7 @@ import (
 	"shop-api/user-web/middlewares" // 导入中间件包
 )
 
-// InitUserRouter 初始化用户相关的路由
+// 初始化用户相关的路由
 func InitUserRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("user") // 在传入的 RouterGroup 上创建一个 "user" 的路由组
 	{

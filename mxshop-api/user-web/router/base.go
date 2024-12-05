@@ -7,7 +7,8 @@ import (
 
 //base64 图片验证码
 
-// InitBaseRouter 初始化基础路由
+// 初始化基础路由
+
 func InitBaseRouter(Router *gin.RouterGroup) {
 	BaseRouter := Router.Group("base") // 在传入的 RouterGroup 上创建一个 "base" 的路由组
 	{

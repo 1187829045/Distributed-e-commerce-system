@@ -16,7 +16,8 @@ import (
 	"shop-api/user-web/global"
 )
 
-// GenerateSmsCode 生成指定长度的随机数字短信验证码
+// 生成指定长度的随机数字短信验证码
+
 func GenerateSmsCode(width int) string {
 	numeric := [10]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9} // 数字数组
 	r := len(numeric)

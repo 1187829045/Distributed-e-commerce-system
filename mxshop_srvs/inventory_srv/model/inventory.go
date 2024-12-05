@@ -48,6 +48,7 @@ type Delivery struct {
 }
 
 // 商品库存销售相关的详细信息
+
 type StockSellDetail struct {
 	OrderSn string          `gorm:"type:varchar(200);index:idx_order_sn,unique;"`
 	Status  int32           `gorm:"type:varchar(200)"` //1 表示已扣减 2. 表示已归还

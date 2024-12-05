@@ -67,7 +67,7 @@ func main() {
 	fmt.Printf("total hits: %d\n", total)
 	for _, value := range result.Hits.Hits {
 		account := Account{}
-		_ = json.Unmarshal(value.Source, &Account{})
+		_ = json.Unmarshal(value.Source, &account)
 		//if jsonData, err := value.Source.MarshalJSON(); err == nil {
 		//	fmt.Println(string(jsonData))
 		//} else {

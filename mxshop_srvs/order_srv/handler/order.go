@@ -133,17 +133,17 @@ func (*OrderServer) OrderList(ctx context.Context, req *proto.OrderFilterRequest
 	// 将查询到的订单信息转换为响应格式，并添加到响应的 Data 切片中
 	for _, order := range orders {
 		rsp.Data = append(rsp.Data, &proto.OrderInfoResponse{
-			Id:      order.ID,                                      // 订单ID
-			UserId:  order.User,                                    // 用户ID
-			OrderSn: order.OrderSn,                                 // 订单编号
-			PayType: order.PayType,                                 // 支付方式
-			Status:  order.Status,                                  // 订单状态
-			Post:    order.Post,                                    // 邮寄方式
-			Total:   order.OrderMount,                              // 订单总金额
-			Address: order.Address,                                 // 收货地址
-			Name:    order.SignerName,                              // 收货人姓名
-			Mobile:  order.SingerMobile,                            // 收货人手机
-			AddTime: order.CreatedAt.Format("2006-01-02 15:04:05"), // 订单创建时间，格式化为字符串
+			Id:      order.ID,
+			UserId:  order.User,
+			OrderSn: order.OrderSn,
+			PayType: order.PayType,
+			Status:  order.Status,
+			Post:    order.Post,
+			Total:   order.OrderMount,
+			Address: order.Address,
+			Name:    order.SignerName,
+			Mobile:  order.SingerMobile,
+			AddTime: order.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 
@@ -271,12 +271,14 @@ func (o *OrderListener) ExecuteLocalTransaction(msg *primitive.Message) primitiv
 
 	// 跨服务调用库存微服务扣减库存
 	queryInvSpan := opentracing.GlobalTracer().StartSpan("query_inv", opentracing.ChildOf(parentSpan.Context()))
+
 	if _, err = global.InventorySrvClient.Sell(context.Background(), &proto.SellInfo{OrderSn: orderInfo.OrderSn, GoodsInfo: goodsInvInfo}); err != nil {
 		// 扣减库存失败，返回回滚状态
 		o.Code = codes.ResourceExhausted
 		o.Detail = "扣减库存失败"
 		return primitive.RollbackMessageState
 	}
+
 	queryInvSpan.Finish()
 
 	// 开始数据库事务，保存订单信息

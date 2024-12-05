@@ -12,7 +12,8 @@ import (
 // 初始化一个默认的内存存储，用于存储验证码
 var store = base64Captcha.DefaultMemStore
 
-// GetCaptcha 处理获取验证码的请求
+//处理获取图片验证码的请求
+
 func GetCaptcha(ctx *gin.Context) {
 	// 创建一个数字验证码的驱动，设置验证码的高度、宽度、位数、干扰强度、最大值
 	driver := base64Captcha.NewDriverDigit(80, 240, 5, 0.7, 80)

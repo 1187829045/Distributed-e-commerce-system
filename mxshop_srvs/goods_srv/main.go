@@ -46,8 +46,10 @@ func main() {
 	server := grpc.NewServer()
 	// 注册商品服务到 gRPC 服务器
 	proto.RegisterGoodsServer(server, &handler.GoodsServer{})
+
 	// 监听指定 IP 和端口号的 TCP 连接
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *Port))
+
 	if err != nil {
 		panic("failed to listen:" + err.Error())
 	}

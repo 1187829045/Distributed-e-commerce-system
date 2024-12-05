@@ -6,7 +6,8 @@ import (
 	"shop-api/user-web/models"
 )
 
-// IsAdminAuth 返回一个 Gin 中间件函数，用于判断当前用户是否为管理员用户。
+//返回一个 Gin 中间件函数，用于判断当前用户是否为管理员用户
+
 func IsAdminAuth() gin.HandlerFunc {
 	// 返回一个闭包函数作为 Gin 中间件处理函数
 	return func(c *gin.Context) {

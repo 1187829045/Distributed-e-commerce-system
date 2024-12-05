@@ -18,7 +18,7 @@ message PasswordCheckInfo {
 }
 
 message CheckResponse {
-    bool success = 1;  // 密码检查是否成功
+    bool success = 1;  // 密码检查是否功
 }
 
 message PageInfo {

@@ -70,7 +70,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 
 	// 是否热门商品筛选
 	if req.IsHot {
-		q = q.Filter(elastic.NewTermQuery("is_hot", req.IsHot))
+		q = q.Filter(elastic.NewTermQuery("is_hot", req.IsHot)) //Filter不算分
 	}
 
 	// 是否新品筛选
@@ -177,6 +177,7 @@ func (s *GoodsServer) GoodsList(ctx context.Context, req *proto.GoodsFilterReque
 		goodsInfoResponse := ModelToResponse(good)
 		goodsListResponse.Data = append(goodsListResponse.Data, &goodsInfoResponse)
 	}
+
 	return goodsListResponse, nil
 }
 

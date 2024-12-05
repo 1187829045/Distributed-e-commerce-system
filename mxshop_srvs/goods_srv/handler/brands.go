@@ -34,6 +34,7 @@ func (s *GoodsServer) BrandList(ctx context.Context, req *proto.BrandFilterReque
 	brandListResponse.Data = brandResponses
 	return &brandListResponse, nil
 }
+
 func (s *GoodsServer) CreateBrand(ctx context.Context, req *proto.BrandRequest) (*proto.BrandInfoResponse, error) {
 	//新建品牌
 	if result := global.DB.Where("name=?", req.Name).First(&model.Brands{}); result.RowsAffected == 1 {
@@ -44,10 +45,12 @@ func (s *GoodsServer) CreateBrand(ctx context.Context, req *proto.BrandRequest) 
 		Name: req.Name,
 		Logo: req.Logo,
 	}
+
 	global.DB.Save(brand)
 
 	return &proto.BrandInfoResponse{Id: brand.ID}, nil
 }
+
 func (s *GoodsServer) DeleteBrand(ctx context.Context, req *proto.BrandRequest) (*emptypb.Empty, error) {
 	if result := global.DB.Delete(&model.Brands{}, req.Id); result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "品牌不存在")

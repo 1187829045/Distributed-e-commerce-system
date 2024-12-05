@@ -57,9 +57,9 @@ func main() {
 	cfg := api.DefaultConfig()
 	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
 
-	client, err := api.NewClient(cfg) // 创建 Consul 客户端
+	client, err := api.NewClient(cfg)
 	if err != nil {
-		panic(err) // 创建客户端失败时触发 panic
+		panic(err)
 	}
 
 	// 生成对应的检查对象
@@ -77,14 +77,14 @@ func main() {
 	serviceID := fmt.Sprintf("%s", uuid.NewV4) // 服务 ID
 	registration.ID = serviceID
 	registration.Port = *Port
-	registration.Tags = []string{"llb", "bobby", "user", "srv"} // 服务标签
+	registration.Tags = []string{"llb", "user", "srv"} // 服务标签
 	registration.Address = "192.168.128.128"
 	registration.Check = check
 
 	// 服务注册到 Consul
 	err = client.Agent().ServiceRegister(registration)
 	if err != nil {
-		panic(err) // 注册失败时触发 panic
+		panic(err)
 	}
 
 	// 启动 gRPC 服务

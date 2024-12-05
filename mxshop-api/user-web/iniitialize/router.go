@@ -1,13 +1,14 @@
 package iniitialize
 
 import (
-	"github.com/gin-gonic/gin"         // 导入 Gin 框架用于构建 HTTP Web 应用程序
-	"net/http"                         // 导入 net/http 包用于 HTTP 状态码和服务器实现
-	"shop-api/user-web/middlewares"    // 导入 middlewares 包用于额外的请求处理
-	router2 "shop-api/user-web/router" // 导入 router 包用于定义路由
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"shop-api/user-web/middlewares"
+	router2 "shop-api/user-web/router"
 )
 
-// Routers 函数初始化并返回一个带有预定义路由和中间件的 Gin 引擎。
+// 函数初始化并返回一个带有预定义路由和中间件的 Gin 引擎。
+
 func Routers() *gin.Engine {
 	Router := gin.Default()
 

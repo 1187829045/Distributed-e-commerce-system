@@ -30,7 +30,6 @@ func (s *GoodsServer) BannerList(ctx context.Context, req *emptypb.Empty) (*prot
 			Url:   banner.Url,
 		})
 	}
-
 	bannerListResponse.Data = bannerReponses
 
 	return &bannerListResponse, nil

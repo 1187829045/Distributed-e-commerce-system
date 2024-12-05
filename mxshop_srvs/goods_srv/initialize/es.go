@@ -16,16 +16,20 @@ func InitEs() {
 	logger := log.New(os.Stdout, "shop", log.LstdFlags)
 	var err error
 	// 使用 `elastic.NewClient` 初始化一个 Elasticsearch 客户端。
+
 	global.EsClient, err = elastic.NewClient(
 		elastic.SetURL(host),
 		elastic.SetSniff(false),
 		elastic.SetTraceLog(logger),
 	)
+
 	if err != nil {
 		panic(err)
 	}
+
 	// 检查 Elasticsearch 中是否存在指定的索引（index），此处的索引名称通过 `model.EsGoods{}.GetIndexName()` 获取。
 	exists, err := global.EsClient.IndexExists(model.EsGoods{}.GetIndexName()).Do(context.Background())
+
 	if err != nil {
 		panic(err)
 	}
@@ -35,6 +39,7 @@ func InitEs() {
 			Do(context.Background())
 
 		if err != nil {
+
 			panic(err)
 		}
 	}

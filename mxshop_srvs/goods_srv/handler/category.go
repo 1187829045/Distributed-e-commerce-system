@@ -22,6 +22,7 @@ func (s *GoodsServer) GetAllCategorysList(context.Context, *emptypb.Empty) (*pro
 }
 
 // 获取子类目
+
 func (s *GoodsServer) GetSubCategory(ctx context.Context, req *proto.CategoryListRequest) (*proto.SubCategoryListResponse, error) {
 	// 创建一个 SubCategoryListResponse 对象，用来存储响应数据
 	categoryListResponse := proto.SubCategoryListResponse{}

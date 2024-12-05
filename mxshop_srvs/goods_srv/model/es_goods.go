@@ -5,16 +5,16 @@ type EsGoods struct {
 	ID          int32   `json:"id"`          // 商品ID
 	CategoryID  int32   `json:"category_id"` // 分类ID
 	BrandsID    int32   `json:"brands_id"`
-	OnSale      bool    `json:"on_sale"`   // 是否在售
-	ShipFree    bool    `json:"ship_free"` // 是否包邮
-	IsNew       bool    `json:"is_new"`    // 是否新品
-	IsHot       bool    `json:"is_hot"`    // 是否热销
-	Name        string  `json:"name"`      // 商品名称
+	OnSale      bool    `json:"on_sale"`
+	ShipFree    bool    `json:"ship_free"`
+	IsNew       bool    `json:"is_new"`
+	IsHot       bool    `json:"is_hot"`
+	Name        string  `json:"name"`
 	ClickNum    int32   `json:"click_num"`
-	SoldNum     int32   `json:"sold_num"`     // 销量
-	FavNum      int32   `json:"fav_num"`      // 收藏数
-	MarketPrice float32 `json:"market_price"` // 商场价格
-	GoodsBrief  string  `json:"goods_brief"`  // 商品简介
+	SoldNum     int32   `json:"sold_num"`
+	FavNum      int32   `json:"fav_num"`
+	MarketPrice float32 `json:"market_price"`
+	GoodsBrief  string  `json:"goods_brief"`
 	ShopPrice   float32 `json:"shop_price"`
 }
 
@@ -23,7 +23,8 @@ func (EsGoods) GetIndexName() string {
 	return "goods"
 }
 
-// GetMapping 返回 Elasticsearch 中的映射（Mapping）配置，定义了字段的数据类型和分析器等信息
+// 返回 Elasticsearch 中的映射（Mapping）配置，定义了字段的数据类型和分析器等信息
+
 func (EsGoods) GetMapping() string {
 	goodsMapping := `
 	{

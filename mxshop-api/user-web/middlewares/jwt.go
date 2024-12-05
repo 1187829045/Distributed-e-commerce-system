@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-// JWTAuth 是一个 gin 中间件函数，用于 JWT 认证
+// 是一个 gin 中间件函数，用于 JWT 认证
+
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从请求头部获取 token 信息，头部字段名称为 x-token
@@ -63,21 +64,24 @@ var (
 	TokenInvalid     = errors.New("Couldn't handle this token:")
 )
 
-// NewJWT 创建一个新的 JWT 实例
+// 创建一个新的 JWT 实例
+
 func NewJWT() *JWT {
 	return &JWT{
 		[]byte(global.ServerConfig.JWTInfo.SigningKey), // 从全局配置中获取签名密钥
 	}
 }
 
-// CreateToken 根据自定义声明创建一个 JWT token
+//  根据自定义声明创建一个 JWT token
+
 func (j *JWT) CreateToken(claims models.CustomClaims) (string, error) {
 	// 使用 HS256 算法生成 token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.SigningKey) // 使用签名密钥签名并返回 token
 }
 
-// ParseToken 解析 token 并返回其中的声明
+//  解析 token 并返回其中的声明
+
 func (j *JWT) ParseToken(tokenString string) (*models.CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &models.CustomClaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return j.SigningKey, nil // 返回签名密钥进行验证

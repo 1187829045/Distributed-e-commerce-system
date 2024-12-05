@@ -5,7 +5,8 @@ import (
 	"net/http"
 )
 
-// Cors 返回一个 Gin 中间件函数，用于处理跨域请求
+//  返回一个 Gin 中间件函数，用于处理跨域请求
+
 func Cors() gin.HandlerFunc {
 	// 返回一个闭包函数作为 Gin 中间件处理函数
 	return func(c *gin.Context) {

@@ -4,7 +4,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-// CustomClaims 定义了自定义的 JWT 载荷结构体
+// 定义了自定义的 JWT 载荷结构体
+
 type CustomClaims struct {
 	// 用户ID
 	ID uint `json:"id"`

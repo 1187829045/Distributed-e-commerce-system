@@ -24,7 +24,7 @@ type ServerConfig struct {
 	ConsulInfo ConsulConfig `mapstructure:"consul" json:"consul"`
 	Host       string       `mapstructure:"host" json:"host"`
 	Tags       []string     `mapstructure:"tags" json:"tags"`
-	EsInfo     EsConfig     `mapstructure:"es" json:"es"` //加入该字段
+	EsInfo     EsConfig     `mapstructure:"es" json:"es"`
 }
 
 type NacosConfig struct {

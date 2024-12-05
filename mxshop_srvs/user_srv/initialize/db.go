@@ -29,13 +29,16 @@ func InitDB() {
 
 	// 全局模式
 	var err error
+
 	global.DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
 		Logger: newLogger,
 	})
+
 	if err != nil {
 		panic(err)
 	}
+
 }

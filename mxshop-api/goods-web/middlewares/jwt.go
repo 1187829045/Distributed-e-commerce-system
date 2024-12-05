@@ -115,7 +115,8 @@ func (j *JWT) ParseToken(tokenString string) (*models.CustomClaims, error) {
 
 }
 
-// RefreshToken 刷新给定的 JWT 令牌字符串，返回新的令牌和可能的错误
+// 刷新给定的 JWT 令牌字符串，返回新的令牌和可能的错误
+
 func (j *JWT) RefreshToken(tokenString string) (string, error) {
 	// 设置时间函数为一个过期的时间
 	jwt.TimeFunc = func() time.Time {
